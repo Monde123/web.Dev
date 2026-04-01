@@ -1,0 +1,4102 @@
+<!doctype html>
+<!--
+  ╔═════════════--═══════════════════════════════════════════════╗
+  ║  Web Development Course — From DOM to WebView                ║
+  ║  Static · Responsive · Modular                               ║
+  ║                                                              ║     ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Cours complet de développement web — DOM, JavaScript, WebView, postMessage. Pour débutants passionnés." />
+    <title>WebDev Course — Du DOM au WebView</title>
+
+    <!-- ── Fonts ──────────────────────────────────────────────────── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap"
+      rel="stylesheet" />
+
+    <style>
+      /* ================================================================
+       SECTION 1 — DESIGN TOKENS (CSS Custom Properties)
+       All visual values live here. Edit this section to retheme.
+       ================================================================ */
+      :root {
+        /* -- Color Palette -- */
+        --col-bg: #080c14;
+        --col-surface: #0d1420;
+        --col-surface-2: #131c2e;
+        --col-surface-3: #1a2540;
+        --col-border: #1f2e47;
+        --col-border-2: #263552;
+
+        /* -- Accent System -- */
+        --col-cyan: #00e5c3;
+        --col-cyan-dim: rgba(0, 229, 195, 0.12);
+        --col-amber: #f5a623;
+        --col-amber-dim: rgba(245, 166, 35, 0.12);
+        --col-rose: #ff5c87;
+        --col-rose-dim: rgba(255, 92, 135, 0.12);
+        --col-purple: #8b7cf6;
+        --col-purple-dim: rgba(139, 124, 246, 0.12);
+
+        /* -- Text -- */
+        --col-text: #e2eaf7;
+        --col-text-2: #8fa4c8;
+        --col-text-3: #4d6285;
+
+        /* -- Code Colors (Dracula-inspired) -- */
+        --code-bg: #060a12;
+        --code-kw: #ff79c6; /* keywords    */
+        --code-fn: #50fa7b; /* functions   */
+        --code-str: #f1fa8c; /* strings     */
+        --code-cm: #4d6285; /* comments    */
+        --code-num: #bd93f9; /* numbers     */
+        --code-prop: #8be9fd; /* properties  */
+        --code-tag: #ff79c6; /* html tags   */
+        --code-attr: #50fa7b; /* attributes  */
+        --code-val: #f1fa8c; /* values      */
+
+        /* -- Typography -- */
+        --font-display: "Syne", sans-serif;
+        --font-serif: "Instrument Serif", serif;
+        --font-body: "Outfit", sans-serif;
+        --font-mono: "IBM Plex Mono", monospace;
+
+        /* -- Spacing -- */
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 16px;
+        --space-lg: 24px;
+        --space-xl: 40px;
+        --space-2xl: 64px;
+        --space-3xl: 96px;
+
+        /* -- Radii -- */
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 24px;
+        --radius-full: 9999px;
+
+        /* -- Shadows -- */
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.5);
+        --shadow-glow-cyan: 0 0 32px rgba(0, 229, 195, 0.15);
+        --shadow-glow-amber: 0 0 32px rgba(245, 166, 35, 0.15);
+
+        /* -- Transitions -- */
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --dur-fast: 150ms;
+        --dur-med: 250ms;
+        --dur-slow: 400ms;
+
+        /* -- Layout -- */
+        --sidebar-w: 260px;
+        --header-h: 64px;
+        --content-max: 820px;
+      }
+
+      /* ================================================================
+       SECTION 2 — BASE RESET
+       Minimal opinionated reset for consistency across browsers.
+       ================================================================ */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+        font-size: 16px;
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        font-family: var(--font-body);
+        background-color: var(--col-bg);
+        color: var(--col-text);
+        line-height: 1.75;
+        overflow-x: hidden;
+        /* subtle grid texture */
+        background-image:
+          linear-gradient(rgba(0, 229, 195, 0.015) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 229, 195, 0.015) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+      }
+      ul,
+      ol {
+        list-style: none;
+      }
+
+      /* ================================================================
+       SECTION 3 — LAYOUT
+       3a. Reading Progress Bar
+       3b. Header
+       3c. Page Body (sidebar + main)
+       3d. Sidebar
+       3e. Main Content
+       3f. Footer
+       ================================================================ */
+
+      /* 3a — Reading progress bar (top of page) */
+      #progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        width: 0%;
+        background: linear-gradient(90deg, var(--col-cyan), var(--col-purple));
+        z-index: 1000;
+        transition: width 100ms linear;
+      }
+
+      /* 3b — Header */
+      #site-header {
+        position: sticky;
+        top: 0;
+        height: var(--header-h);
+        background: rgba(8, 12, 20, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--col-border);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--space-xl);
+      }
+      /* Logo area */
+      .header-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+      }
+      .header-logo-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, var(--col-cyan), var(--col-purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        box-shadow: var(--shadow-glow-cyan);
+      }
+      .header-logo-text {
+        font-family: var(--font-display);
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+      .header-logo-text span {
+        color: var(--col-cyan);
+      }
+      /* Header center — chapter indicator */
+      #header-chapter {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--col-text-3);
+        background: var(--col-surface-2);
+        border: 1px solid var(--col-border);
+        padding: 4px 12px;
+        border-radius: var(--radius-full);
+        letter-spacing: 0.5px;
+        transition: color var(--dur-med);
+      }
+      /* Header right — stats */
+      .header-stats {
+        display: flex;
+        align-items: center;
+        gap: var(--space-lg);
+      }
+      .header-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+      }
+      .header-stat-val {
+        font-family: var(--font-display);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--col-cyan);
+        line-height: 1;
+      }
+      .header-stat-label {
+        font-size: 10px;
+        color: var(--col-text-3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      /* Hamburger (mobile only) */
+      #menu-toggle {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        padding: var(--space-sm);
+        background: transparent;
+        border-radius: var(--radius-sm);
+      }
+      #menu-toggle span {
+        display: block;
+        width: 22px;
+        height: 2px;
+        background: var(--col-text-2);
+        border-radius: 2px;
+        transition: all var(--dur-med) var(--ease-out);
+      }
+      #menu-toggle.open span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      #menu-toggle.open span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+      #menu-toggle.open span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+
+      /* 3c — Page Body */
+      #page-body {
+        display: flex;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+
+      /* 3d — Sidebar */
+      #sidebar {
+        width: var(--sidebar-w);
+        min-width: var(--sidebar-w);
+        position: sticky;
+        top: var(--header-h);
+        height: calc(100vh - var(--header-h));
+        overflow-y: auto;
+        padding: var(--space-xl) var(--space-lg);
+        border-right: 1px solid var(--col-border);
+        scrollbar-width: thin;
+        scrollbar-color: var(--col-border) transparent;
+      }
+      #sidebar::-webkit-scrollbar {
+        width: 4px;
+      }
+      #sidebar::-webkit-scrollbar-thumb {
+        background: var(--col-border);
+        border-radius: 4px;
+      }
+
+      .sidebar-section-label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--col-text-3);
+        padding: 0 var(--space-md);
+        margin-bottom: var(--space-sm);
+      }
+      /* Quiz progress mini-display in sidebar */
+      .sidebar-quiz-score {
+        background: var(--col-surface-2);
+        border: 1px solid var(--col-border);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+        margin-bottom: var(--space-xl);
+      }
+      .sidebar-quiz-score-title {
+        font-size: 11px;
+        color: var(--col-text-3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: var(--space-sm);
+      }
+      .sidebar-quiz-score-val {
+        font-family: var(--font-display);
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--col-cyan);
+        line-height: 1;
+      }
+      .sidebar-quiz-score-sub {
+        font-size: 12px;
+        color: var(--col-text-3);
+        margin-top: 2px;
+      }
+      .score-bar-track {
+        margin-top: var(--space-sm);
+        height: 4px;
+        background: var(--col-border);
+        border-radius: var(--radius-full);
+        overflow: hidden;
+      }
+      .score-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--col-cyan), var(--col-purple));
+        border-radius: var(--radius-full);
+        transition: width var(--dur-slow) var(--ease-out);
+        width: 0%;
+      }
+
+      /* Nav items */
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: 9px var(--space-md);
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--col-text-2);
+        transition: all var(--dur-fast);
+        cursor: pointer;
+        position: relative;
+      }
+      .nav-item:hover {
+        background: var(--col-surface-2);
+        color: var(--col-text);
+      }
+      .nav-item.active {
+        background: var(--col-cyan-dim);
+        color: var(--col-cyan);
+      }
+      .nav-item.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 20%;
+        bottom: 20%;
+        width: 2px;
+        background: var(--col-cyan);
+        border-radius: var(--radius-full);
+      }
+      .nav-num {
+        width: 22px;
+        height: 22px;
+        border-radius: var(--radius-sm);
+        font-size: 10px;
+        font-weight: 700;
+        font-family: var(--font-mono);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: var(--col-surface-3);
+        color: var(--col-text-3);
+        transition: all var(--dur-fast);
+      }
+      .nav-item.active .nav-num {
+        background: rgba(0, 229, 195, 0.2);
+        color: var(--col-cyan);
+      }
+      /* Quiz completion badge in nav */
+      .nav-quiz-badge {
+        margin-left: auto;
+        font-size: 9px;
+        padding: 2px 6px;
+        border-radius: var(--radius-full);
+        font-family: var(--font-mono);
+        font-weight: 600;
+        opacity: 0;
+        transition: opacity var(--dur-med);
+      }
+      .nav-quiz-badge.visible {
+        opacity: 1;
+      }
+      .nav-quiz-badge.pass {
+        background: rgba(0, 229, 195, 0.15);
+        color: var(--col-cyan);
+      }
+      .nav-quiz-badge.fail {
+        background: rgba(255, 92, 135, 0.15);
+        color: var(--col-rose);
+      }
+
+      /* 3e — Main Content */
+      #main-content {
+        flex: 1;
+        min-width: 0;
+        padding: var(--space-2xl) var(--space-2xl);
+        max-width: var(--content-max);
+      }
+
+      /* 3f — Footer */
+      #site-footer {
+        background: var(--col-surface);
+        border-top: 1px solid var(--col-border);
+        margin-top: var(--space-3xl);
+      }
+      .footer-inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: var(--space-2xl) var(--space-xl);
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: var(--space-2xl);
+        padding-bottom: var(--space-2xl);
+        border-bottom: 1px solid var(--col-border);
+        margin-bottom: var(--space-xl);
+      }
+      .footer-brand p {
+        font-size: 14px;
+        color: var(--col-text-2);
+        margin-top: var(--space-md);
+        max-width: 280px;
+        line-height: 1.7;
+      }
+      .footer-brand-logo {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-bottom: var(--space-sm);
+      }
+      .footer-brand-logo-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, var(--col-cyan), var(--col-purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+      .footer-brand-logo-text {
+        font-family: var(--font-display);
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .footer-brand-logo-text span {
+        color: var(--col-cyan);
+      }
+      .footer-col h4 {
+        font-family: var(--font-display);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--col-text-3);
+        margin-bottom: var(--space-lg);
+      }
+      .footer-col ul {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+      }
+      .footer-col li {
+        font-size: 14px;
+        color: var(--col-text-2);
+        cursor: pointer;
+        transition: color var(--dur-fast);
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+      }
+      .footer-col li:hover {
+        color: var(--col-cyan);
+      }
+      .footer-col li .ch-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--col-border-2);
+        flex-shrink: 0;
+        transition: background var(--dur-fast);
+      }
+      .footer-col li:hover .ch-dot {
+        background: var(--col-cyan);
+      }
+      /* Footer bottom bar */
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: var(--space-md);
+      }
+      .footer-bottom-left {
+        font-size: 13px;
+        color: var(--col-text-3);
+      }
+      .footer-bottom-left strong {
+        color: var(--col-text-2);
+      }
+      .footer-tags {
+        display: flex;
+        gap: var(--space-sm);
+        flex-wrap: wrap;
+      }
+      .footer-tag {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 3px 9px;
+        border-radius: var(--radius-full);
+        border: 1px solid var(--col-border-2);
+        color: var(--col-text-3);
+      }
+
+      /* ================================================================
+       SECTION 4 — COMPONENTS
+       4a. Hero
+       4b. Chapter Headers
+       4c. Section Prose
+       4d. Code Blocks
+       4e. Callout Boxes
+       4f. Analogy Cards
+       4g. Data Tables
+       4h. Step Cards
+       4i. DOM Tree Visualizer
+       4j. Dividers
+       ================================================================ */
+
+      /* 4a — Hero */
+      .hero {
+        position: relative;
+        padding: var(--space-3xl) 0 var(--space-2xl);
+        margin-bottom: var(--space-2xl);
+        overflow: hidden;
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: -20%;
+        right: -20%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--col-border),
+          var(--col-cyan-dim),
+          var(--col-border),
+          transparent
+        );
+      }
+      .hero-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-sm);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--col-cyan);
+        background: var(--col-cyan-dim);
+        border: 1px solid rgba(0, 229, 195, 0.25);
+        padding: 5px 14px;
+        border-radius: var(--radius-full);
+        margin-bottom: var(--space-xl);
+      }
+      .hero-eyebrow::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: var(--col-cyan);
+        border-radius: 50%;
+        animation: pulse 2s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.8);
+        }
+      }
+      .hero h1 {
+        font-family: var(--font-display);
+        font-size: clamp(36px, 5vw, 60px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        line-height: 1.05;
+        margin-bottom: var(--space-lg);
+      }
+      .hero h1 em {
+        font-family: var(--font-serif);
+        font-style: italic;
+        font-weight: 400;
+        color: var(--col-cyan);
+      }
+      .hero-sub {
+        font-size: 18px;
+        color: var(--col-text-2);
+        max-width: 520px;
+        line-height: 1.7;
+        margin-bottom: var(--space-xl);
+      }
+      .hero-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+      }
+      .chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: var(--radius-full);
+        border: 1px solid;
+      }
+      .chip.cyan {
+        border-color: rgba(0, 229, 195, 0.3);
+        color: var(--col-cyan);
+        background: var(--col-cyan-dim);
+      }
+      .chip.amber {
+        border-color: rgba(245, 166, 35, 0.3);
+        color: var(--col-amber);
+        background: var(--col-amber-dim);
+      }
+      .chip.rose {
+        border-color: rgba(255, 92, 135, 0.3);
+        color: var(--col-rose);
+        background: var(--col-rose-dim);
+      }
+      .chip.purple {
+        border-color: rgba(139, 124, 246, 0.3);
+        color: var(--col-purple);
+        background: var(--col-purple-dim);
+      }
+
+      /* 4b — Chapter Headers */
+      .chapter {
+        margin-bottom: var(--space-3xl);
+        scroll-margin-top: calc(var(--header-h) + 24px);
+        animation: fadeUp 0.5s var(--ease-out) both;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .chapter-header {
+        display: flex;
+        gap: var(--space-lg);
+        align-items: flex-start;
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-xl);
+        position: relative;
+      }
+      .chapter-header::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, var(--col-border), transparent 70%);
+      }
+      .chapter-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+        border: 1px solid;
+      }
+      .chapter-meta {
+        flex: 1;
+      }
+      .chapter-num-tag {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--col-text-3);
+        margin-bottom: 6px;
+      }
+      .chapter h2 {
+        font-family: var(--font-display);
+        font-size: 28px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1.15;
+      }
+      .chapter-desc {
+        font-size: 14px;
+        color: var(--col-text-2);
+        margin-top: 6px;
+      }
+
+      /* 4c — Section Prose */
+      .section {
+        margin-bottom: var(--space-xl);
+      }
+      .section h3 {
+        font-family: var(--font-display);
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        margin-bottom: var(--space-md);
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+      }
+      .section h3::before {
+        content: "";
+        width: 3px;
+        height: 18px;
+        background: var(--col-cyan);
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+      .section p {
+        font-size: 15px;
+        color: #b4c6e0;
+        margin-bottom: var(--space-md);
+        line-height: 1.8;
+      }
+      .section p:last-child {
+        margin-bottom: 0;
+      }
+      /* Inline code */
+      .ic {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--col-cyan);
+        background: var(--col-cyan-dim);
+        border: 1px solid rgba(0, 229, 195, 0.2);
+        padding: 1px 6px;
+        border-radius: var(--radius-sm);
+      }
+      .hl {
+        color: var(--col-cyan);
+        font-weight: 600;
+      }
+      .hl-amber {
+        color: var(--col-amber);
+        font-weight: 600;
+      }
+      .hl-rose {
+        color: var(--col-rose);
+        font-weight: 600;
+      }
+      .hl-purple {
+        color: var(--col-purple);
+        font-weight: 600;
+      }
+
+      /* 4d — Code Blocks */
+      .code-block {
+        background: var(--code-bg);
+        border: 1px solid var(--col-border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        margin: var(--space-lg) 0;
+        position: relative;
+      }
+      .code-block:hover {
+        border-color: var(--col-border-2);
+      }
+      .code-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-sm) var(--space-md);
+        background: var(--col-surface);
+        border-bottom: 1px solid var(--col-border);
+      }
+      .code-header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+      }
+      .code-dots {
+        display: flex;
+        gap: 5px;
+      }
+      .code-dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .code-lang {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--col-text-3);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+      }
+      /* Copy button */
+      .copy-btn {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--col-text-3);
+        background: var(--col-surface-3);
+        border: 1px solid var(--col-border);
+        padding: 3px 8px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: all var(--dur-fast);
+        letter-spacing: 0.5px;
+      }
+      .copy-btn:hover {
+        color: var(--col-cyan);
+        border-color: rgba(0, 229, 195, 0.3);
+      }
+      .copy-btn.copied {
+        color: var(--col-cyan);
+        border-color: rgba(0, 229, 195, 0.3);
+      }
+      pre {
+        padding: var(--space-xl);
+        overflow-x: auto;
+        line-height: 1.75;
+        scrollbar-width: thin;
+        scrollbar-color: var(--col-border) transparent;
+      }
+      pre::-webkit-scrollbar {
+        height: 4px;
+      }
+      pre::-webkit-scrollbar-thumb {
+        background: var(--col-border);
+      }
+      code {
+        font-family: var(--font-mono);
+        font-size: 13.5px;
+      }
+      /* Token colors */
+      .kw {
+        color: var(--code-kw);
+      }
+      .fn {
+        color: var(--code-fn);
+      }
+      .str {
+        color: var(--code-str);
+      }
+      .cm {
+        color: var(--code-cm);
+        font-style: italic;
+      }
+      .num {
+        color: var(--code-num);
+      }
+      .prop {
+        color: var(--code-prop);
+      }
+      .tag {
+        color: var(--code-tag);
+      }
+      .attr {
+        color: var(--code-attr);
+      }
+      .val {
+        color: var(--code-val);
+      }
+
+      /* 4e — Callout Boxes */
+      .callout {
+        border-radius: var(--radius-lg);
+        padding: var(--space-lg) var(--space-xl);
+        margin: var(--space-lg) 0;
+        border-left: 3px solid;
+        display: flex;
+        gap: var(--space-md);
+      }
+      .callout-icon {
+        font-size: 18px;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .callout-body {
+      }
+      .callout-title {
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+      }
+      .callout p {
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.7;
+      }
+      .callout.info {
+        background: var(--col-cyan-dim);
+        border-color: var(--col-cyan);
+        color: #a8ead9;
+      }
+      .callout.tip {
+        background: var(--col-purple-dim);
+        border-color: var(--col-purple);
+        color: #c4b5fd;
+      }
+      .callout.warning {
+        background: var(--col-amber-dim);
+        border-color: var(--col-amber);
+        color: #fcd34d;
+      }
+      .callout.danger {
+        background: var(--col-rose-dim);
+        border-color: var(--col-rose);
+        color: #fca5a5;
+      }
+      .callout.info .callout-title {
+        color: var(--col-cyan);
+      }
+      .callout.tip .callout-title {
+        color: var(--col-purple);
+      }
+      .callout.warning .callout-title {
+        color: var(--col-amber);
+      }
+      .callout.danger .callout-title {
+        color: var(--col-rose);
+      }
+
+      /* 4f — Analogy Cards */
+      .analogy {
+        background: var(--col-surface-2);
+        border: 1px solid var(--col-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-xl);
+        margin: var(--space-lg) 0;
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        gap: var(--space-lg);
+        align-items: start;
+        position: relative;
+        overflow: hidden;
+      }
+      .analogy::before {
+        content: "ANALOGY";
+        position: absolute;
+        top: var(--space-md);
+        right: var(--space-md);
+        font-family: var(--font-mono);
+        font-size: 9px;
+        letter-spacing: 2px;
+        color: var(--col-text-3);
+        border: 1px solid var(--col-border);
+        padding: 2px 6px;
+        border-radius: var(--radius-full);
+      }
+      .analogy-icon-wrap {
+        width: 52px;
+        height: 52px;
+        background: var(--col-surface-3);
+        border: 1px solid var(--col-border-2);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+      }
+      .analogy h4 {
+        font-family: var(--font-display);
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--col-amber);
+      }
+      .analogy p {
+        font-size: 14px;
+        color: var(--col-text-2);
+        margin: 0;
+        line-height: 1.7;
+      }
+
+      /* 4g — Data Tables */
+      .table-wrap {
+        overflow-x: auto;
+        margin: var(--space-lg) 0;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--col-border);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      thead tr {
+        background: var(--col-surface-2);
+      }
+      th {
+        padding: 10px var(--space-lg);
+        text-align: left;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--col-text-3);
+        border-bottom: 1px solid var(--col-border);
+        white-space: nowrap;
+      }
+      td {
+        padding: 11px var(--space-lg);
+        border-bottom: 1px solid var(--col-border);
+        color: #b4c6e0;
+        vertical-align: top;
+        line-height: 1.6;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      /* 4h — Step Cards */
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        margin: var(--space-lg) 0;
+      }
+      .step {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: var(--space-md);
+        background: var(--col-surface-2);
+        border: 1px solid var(--col-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-md) var(--space-lg);
+        align-items: start;
+        transition: border-color var(--dur-fast);
+      }
+      .step:hover {
+        border-color: var(--col-border-2);
+      }
+      .step-num {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 12px;
+      }
+      .step-content h4 {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 4px;
+      }
+      .step-content p {
+        font-size: 13px;
+        color: var(--col-text-2);
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      /* 4i — DOM Tree Visualizer */
+      .dom-tree {
+        background: var(--code-bg);
+        border: 1px solid var(--col-border);
+        border-radius: var(--radius-lg);
+        padding: var(--space-xl);
+        margin: var(--space-lg) 0;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        overflow-x: auto;
+      }
+      .dom-node {
+        padding: 3px 0;
+        white-space: nowrap;
+      }
+      .dom-tag {
+        color: var(--code-tag);
+      }
+      .dom-attr {
+        color: var(--code-attr);
+      }
+      .dom-text {
+        color: var(--code-str);
+      }
+      .dom-tree-line {
+        border-left: 1px solid var(--col-border-2);
+        margin-left: 12px;
+        padding-left: 14px;
+      }
+
+      /* 4j — Section Divider */
+      .divider {
+        height: 1px;
+        background: linear-gradient(90deg, var(--col-border), transparent 70%);
+        margin: var(--space-2xl) 0;
+      }
+
+      /* ================================================================
+       SECTION 5 — QUIZ COMPONENT
+       ================================================================ */
+
+      .quiz-block {
+        margin-top: var(--space-2xl);
+        background: var(--col-surface);
+        border: 1px solid var(--col-border);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+      }
+      /* Quiz header banner */
+      .quiz-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-lg) var(--space-xl);
+        background: linear-gradient(
+          135deg,
+          rgba(139, 124, 246, 0.08),
+          rgba(0, 229, 195, 0.06)
+        );
+        border-bottom: 1px solid var(--col-border);
+      }
+      .quiz-header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+      }
+      .quiz-badge {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        background: var(--col-purple-dim);
+        border: 1px solid rgba(139, 124, 246, 0.3);
+        color: var(--col-purple);
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+      }
+      .quiz-title {
+        font-family: var(--font-display);
+        font-size: 17px;
+        font-weight: 700;
+      }
+      .quiz-meta {
+        font-size: 12px;
+        color: var(--col-text-3);
+        font-family: var(--font-mono);
+      }
+      /* Quiz body */
+      .quiz-body {
+        padding: var(--space-xl);
+      }
+      /* Individual question */
+      .quiz-question {
+        margin-bottom: var(--space-xl);
+        padding-bottom: var(--space-xl);
+        border-bottom: 1px solid var(--col-border);
+      }
+      .quiz-question:last-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+      .q-number {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--col-text-3);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: var(--space-sm);
+      }
+      .q-text {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: var(--space-md);
+        line-height: 1.5;
+      }
+      /* Answer options */
+      .q-options {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+      }
+      .q-option {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-md);
+        padding: var(--space-md) var(--space-lg);
+        background: var(--col-surface-2);
+        border: 1.5px solid var(--col-border);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: 14px;
+        color: var(--col-text-2);
+        transition: all var(--dur-fast);
+        line-height: 1.5;
+      }
+      .q-option:hover:not(.disabled) {
+        border-color: var(--col-border-2);
+        color: var(--col-text);
+        background: var(--col-surface-3);
+      }
+      .q-option.selected {
+        border-color: var(--col-purple);
+        background: var(--col-purple-dim);
+        color: var(--col-text);
+      }
+      .q-option.correct {
+        border-color: var(--col-cyan);
+        background: var(--col-cyan-dim);
+        color: var(--col-text);
+      }
+      .q-option.wrong {
+        border-color: var(--col-rose);
+        background: var(--col-rose-dim);
+        color: var(--col-text);
+      }
+      .q-option.disabled {
+        cursor: default;
+        pointer-events: none;
+      }
+      .q-option-letter {
+        width: 22px;
+        height: 22px;
+        border-radius: var(--radius-sm);
+        background: var(--col-surface-3);
+        border: 1px solid var(--col-border-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+        transition: all var(--dur-fast);
+      }
+      .q-option.correct .q-option-letter {
+        background: rgba(0, 229, 195, 0.2);
+        border-color: var(--col-cyan);
+        color: var(--col-cyan);
+      }
+      .q-option.wrong .q-option-letter {
+        background: rgba(255, 92, 135, 0.2);
+        border-color: var(--col-rose);
+        color: var(--col-rose);
+      }
+      /* Explanation shown after answering */
+      .q-explanation {
+        display: none;
+        margin-top: var(--space-md);
+        padding: var(--space-md) var(--space-lg);
+        background: var(--col-surface-3);
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        color: var(--col-text-2);
+        line-height: 1.7;
+        border-left: 3px solid var(--col-cyan);
+      }
+      .q-explanation.show {
+        display: block;
+      }
+      .q-explanation strong {
+        color: var(--col-cyan);
+      }
+      /* Submit / Results */
+      .quiz-footer {
+        padding: var(--space-lg) var(--space-xl);
+        background: var(--col-surface-2);
+        border-top: 1px solid var(--col-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-md);
+        flex-wrap: wrap;
+      }
+      .quiz-submit-btn {
+        font-family: var(--font-display);
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px var(--space-xl);
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, var(--col-purple), var(--col-cyan));
+        color: var(--col-bg);
+        transition: all var(--dur-med) var(--ease-out);
+        box-shadow: 0 0 0 0 rgba(139, 124, 246, 0.4);
+      }
+      .quiz-submit-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(139, 124, 246, 0.35);
+      }
+      .quiz-submit-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .quiz-reset-btn {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        background: transparent;
+        border: 1px solid var(--col-border-2);
+        color: var(--col-text-3);
+        transition: all var(--dur-fast);
+      }
+      .quiz-reset-btn:hover {
+        border-color: var(--col-text-2);
+        color: var(--col-text);
+      }
+      /* Result display */
+      .quiz-result {
+        display: none;
+        align-items: center;
+        gap: var(--space-md);
+      }
+      .quiz-result.show {
+        display: flex;
+      }
+      .quiz-score-display {
+        font-family: var(--font-display);
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+      }
+      .quiz-score-display.pass {
+        color: var(--col-cyan);
+      }
+      .quiz-score-display.fail {
+        color: var(--col-rose);
+      }
+      .quiz-score-label {
+        font-size: 13px;
+        color: var(--col-text-3);
+      }
+      .quiz-result-msg {
+        font-size: 13px;
+      }
+      .quiz-result-msg.pass {
+        color: var(--col-cyan);
+      }
+      .quiz-result-msg.fail {
+        color: var(--col-rose);
+      }
+
+      /* ================================================================
+       SECTION 6 — ANIMATIONS & RESPONSIVE
+       ================================================================ */
+
+      /* Fade-in on scroll (added via JS) */
+      .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+          opacity 0.5s var(--ease-out),
+          transform 0.5s var(--ease-out);
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* Mobile overlay sidebar */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 149;
+        backdrop-filter: blur(2px);
+      }
+
+      /* ── Tablet (≤1024px) ── */
+      @media (max-width: 1024px) {
+        :root {
+          --sidebar-w: 220px;
+        }
+        #main-content {
+          padding: var(--space-2xl) var(--space-xl);
+        }
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: var(--space-xl);
+        }
+      }
+
+      /* ── Mobile (≤768px) ── */
+      @media (max-width: 768px) {
+        /* Sidebar becomes a slide-in drawer */
+        #sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100%;
+          z-index: 150;
+          transform: translateX(-100%);
+          transition: transform var(--dur-slow) var(--ease-out);
+          background: var(--col-surface);
+          padding-top: calc(var(--header-h) + var(--space-lg));
+        }
+        #sidebar.open {
+          transform: translateX(0);
+          box-shadow: var(--shadow-md);
+        }
+        .sidebar-overlay {
+          display: block;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity var(--dur-slow);
+        }
+        .sidebar-overlay.show {
+          opacity: 1;
+          pointer-events: all;
+        }
+
+        #menu-toggle {
+          display: flex;
+        }
+        #page-body {
+          display: block;
+        }
+        #main-content {
+          padding: var(--space-xl) var(--space-lg);
+        }
+
+        /* Header: hide stats on small screens */
+        .header-stats {
+          display: none;
+        }
+        #header-chapter {
+          display: none;
+        }
+
+        /* Chapter headers stack vertically */
+        .chapter-header {
+          flex-direction: column;
+          gap: var(--space-md);
+        }
+        .chapter h2 {
+          font-size: 24px;
+        }
+
+        /* Analogy cards stack */
+        .analogy {
+          grid-template-columns: 1fr;
+        }
+
+        /* Footer */
+        .footer-grid {
+          grid-template-columns: 1fr;
+          gap: var(--space-xl);
+        }
+        .footer-bottom {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        /* Code text slightly smaller */
+        code {
+          font-size: 12px;
+        }
+        pre {
+          padding: var(--space-lg);
+        }
+
+        .hero {
+          padding: var(--space-2xl) 0 var(--space-xl);
+        }
+        .hero h1 {
+          font-size: 32px;
+        }
+        .hero-sub {
+          font-size: 15px;
+        }
+
+        /* Quiz */
+        .quiz-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: var(--space-sm);
+        }
+        .quiz-footer {
+          flex-direction: column-reverse;
+        }
+      }
+
+      /* ── Small (≤480px) ── */
+      @media (max-width: 480px) {
+        #site-header {
+          padding: 0 var(--space-lg);
+        }
+        #main-content {
+          padding: var(--space-lg);
+        }
+        .chapter h2 {
+          font-size: 22px;
+        }
+        .step {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ══════════════════════════════════════════════════════
+       READING PROGRESS BAR
+       Updated by JS on scroll.
+  ══════════════════════════════════════════════════════ -->
+    <div
+      id="progress-bar"
+      role="progressbar"
+      aria-valuenow="0"
+      aria-valuemin="0"
+      aria-valuemax="100"></div>
+
+    <!-- ══════════════════════════════════════════════════════
+       HEADER
+       - Logo
+       - Current chapter indicator (updated by IntersectionObserver)
+       - Reading stats
+       - Hamburger (mobile only)
+  ══════════════════════════════════════════════════════ -->
+    <header id="site-header" role="banner">
+      <!-- Logo -->
+      <div class="header-logo">
+        <div class="header-logo-icon">⚡</div>
+        <div class="header-logo-text">Web<span>Dev</span>.cours</div>
+      </div>
+
+      <!-- Current chapter pill (updated by JS) -->
+      <div id="header-chapter" aria-live="polite">Ch.1 — HTML</div>
+
+      <!-- Stats + Mobile toggle -->
+      <div class="header-stats">
+        <div class="header-stat">
+          <span class="header-stat-val">8</span>
+          <span class="header-stat-label">Chapitres</span>
+        </div>
+        <div class="header-stat">
+          <span class="header-stat-val" id="quiz-total-score">0</span>
+          <span class="header-stat-label">Score</span>
+        </div>
+      </div>
+      <button
+        id="menu-toggle"
+        aria-label="Toggle navigation"
+        aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+    <!-- ══════════════════════════════════════════════════════
+       PAGE BODY (sidebar + main)
+  ══════════════════════════════════════════════════════ -->
+    <div id="page-body">
+      <!-- ═══════════════════════
+         SIDEBAR / NAV
+    ═══════════════════════ -->
+      <nav id="sidebar" role="navigation" aria-label="Course chapters">
+        <!-- Global quiz score widget -->
+        <div class="sidebar-quiz-score">
+          <div class="sidebar-quiz-score-title">Score global</div>
+          <div class="sidebar-quiz-score-val" id="sidebar-score-val">0 pts</div>
+          <div class="sidebar-quiz-score-sub" id="sidebar-score-sub">
+            0 / 4 quiz complétés
+          </div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" id="sidebar-score-bar"></div>
+          </div>
+        </div>
+
+        <div class="sidebar-section-label">Chapitres</div>
+
+        <!-- Nav items: data-chapter links to section IDs -->
+        <a class="nav-item active" href="#ch1" data-chapter="ch1">
+          <span class="nav-num">01</span> HTML — La structure
+          <span class="nav-quiz-badge" id="badge-ch1"></span>
+        </a>
+        <a class="nav-item" href="#ch2" data-chapter="ch2">
+          <span class="nav-num">02</span> Le DOM
+          <span class="nav-quiz-badge" id="badge-ch2"></span>
+        </a>
+        <a class="nav-item" href="#ch3" data-chapter="ch3">
+          <span class="nav-num">03</span> getElementById
+          <span class="nav-quiz-badge" id="badge-ch3"></span>
+        </a>
+        <a class="nav-item" href="#ch4" data-chapter="ch4">
+          <span class="nav-num">04</span> Les événements
+          <span class="nav-quiz-badge" id="badge-ch4"></span>
+        </a>
+        <a class="nav-item" href="#ch5" data-chapter="ch5">
+          <span class="nav-num">05</span> addEventListener
+        </a>
+        <a class="nav-item" href="#ch6" data-chapter="ch6">
+          <span class="nav-num">06</span> La balise &lt;video&gt;
+        </a>
+        <a class="nav-item" href="#ch7" data-chapter="ch7">
+          <span class="nav-num">07</span> postMessage
+          <span class="nav-quiz-badge" id="badge-ch7"></span>
+        </a>
+        <a class="nav-item" href="#ch8" data-chapter="ch8">
+          <span class="nav-num">08</span> injectJavaScript
+          <span class="nav-quiz-badge" id="badge-ch8"></span>
+        </a>
+      </nav>
+
+      <!-- ═══════════════════════
+         MAIN CONTENT
+    ═══════════════════════ -->
+      <main id="main-content" role="main">
+        <!-- ──────────────────────────────────────────────
+           HERO SECTION
+      ────────────────────────────────────────────── -->
+        <section class="hero" aria-label="Course introduction">
+          <div class="hero-eyebrow">Cours interactif</div>
+          <h1>Du <em>DOM</em> au WebView<br />— tout comprendre</h1>
+          <p class="hero-sub">
+            Un cours complet pour maîtriser les fondamentaux du web : HTML,
+            JavaScript, événements, et la communication entre React Native et un
+            WebView. Expliqué avec des analogies simples.
+          </p>
+          <div class="hero-chips">
+            <span class="chip cyan">⚡ 8 chapitres</span>
+            <span class="chip purple">🧠 4 quiz</span>
+            <span class="chip amber">🔰 Niveau débutant</span>
+            <span class="chip rose">📱 Cas réel React Native</span>
+          </div>
+        </section>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 1 — HTML
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch1" aria-labelledby="ch1-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(0, 229, 195, 0.08);
+                border-color: rgba(0, 229, 195, 0.2);
+                color: var(--col-cyan);
+              ">
+              🏗️
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 01</div>
+              <h2 id="ch1-title">HTML — La structure d'une page</h2>
+              <p class="chapter-desc">
+                Comprendre ce qu'est une page web avant de la manipuler
+              </p>
+            </div>
+          </div>
+
+          <!-- Section: What is HTML -->
+          <div class="section reveal">
+            <h3>Qu'est-ce que le HTML ?</h3>
+            <p>
+              Imagine que tu construis une maison. Le
+              <span class="hl">HTML</span> c'est le plan de la maison — il dit
+              "ici il y a un mur, là une fenêtre, ici une porte". Il ne dit pas
+              de quelle couleur sont les murs (c'est le CSS), ni comment les
+              portes s'ouvrent (c'est le JavaScript). Juste la
+              <em>structure</em>.
+            </p>
+
+            <div class="analogy">
+              <div class="analogy-icon-wrap">🏠</div>
+              <div>
+                <h4>La maison et ses trois métiers</h4>
+                <p>
+                  <strong style="color: var(--col-cyan)">HTML</strong> = La
+                  structure (murs, fenêtres, portes) <br />
+                  <strong style="color: var(--col-purple)">CSS</strong> = La
+                  décoration (peinture, rideaux, meubles) <br />
+                  <strong style="color: var(--col-amber)">JavaScript</strong> =
+                  L'électricité et la domotique (lumières qui s'allument, portes
+                  automatiques)
+                </p>
+              </div>
+            </div>
+
+            <p>
+              Une page HTML est composée de <span class="hl">balises</span>.
+              Chaque balise ressemble à ceci :
+            </p>
+
+            <div class="code-block reveal">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span>
+                    <span style="background: #febc2e"></span>
+                    <span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang">HTML</span>
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="cm">&lt;!-- A tag opens and closes --&gt;</span>
+<span class="tag">&lt;p&gt;</span>Hello, I am a paragraph!<span class="tag">&lt;/p&gt;</span>
+
+<span class="cm">&lt;!-- Tags can have attributes --&gt;</span>
+<span class="tag">&lt;video</span> <span class="attr">id</span>=<span class="val">"myVideo"</span> <span class="attr">src</span>=<span class="val">"film.mp4"</span> <span class="attr">autoplay</span><span class="tag">&gt;&lt;/video&gt;</span>
+<span class="cm">&lt;!--    ↑ attribute     ↑ attribute   ↑ boolean attribute (no value) --&gt;</span>
+
+<span class="cm">&lt;!-- A full minimal page structure --&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+  <span class="tag">&lt;head&gt;</span>
+    <span class="tag">&lt;title&gt;</span>My site<span class="tag">&lt;/title&gt;</span>   <span class="cm">&lt;!-- browser tab title --&gt;</span>
+  <span class="tag">&lt;/head&gt;</span>
+  <span class="tag">&lt;body&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Main title<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;p&gt;</span>A paragraph.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+            </div>
+
+            <div class="callout info reveal">
+              <div class="callout-icon">💡</div>
+              <div class="callout-body">
+                <div class="callout-title">The id attribute</div>
+                <p>
+                  The <strong>id</strong> attribute gives a
+                  <em>unique identifier</em> to a tag. Like a person's name in a
+                  room — there can only be one. We'll use it later with
+                  <code class="ic">getElementById</code>.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz 1 -->
+          <div
+            class="quiz-block reveal"
+            id="quiz-ch1"
+            data-chapter="ch1"
+            data-max-score="3">
+            <div class="quiz-header">
+              <div class="quiz-header-left">
+                <span class="quiz-badge">Quiz</span>
+                <span class="quiz-title">HTML — Vérification des acquis</span>
+              </div>
+              <span class="quiz-meta" id="quiz-ch1-progress"
+                >0 / 3 réponses</span
+              >
+            </div>
+
+            <div class="quiz-body">
+              <!-- Q1 -->
+              <div class="quiz-question" data-qid="1">
+                <div class="q-number">Question 01 / 03</div>
+                <div class="q-text">
+                  Quel est le rôle du HTML dans une page web ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span>
+                    <span>Définir les couleurs et la mise en page</span>
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span>
+                    <span>Définir la structure et le contenu</span>
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span>
+                    <span>Gérer les interactions utilisateur</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span>
+                    <span>Communiquer avec un serveur</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Correct.</strong> HTML (HyperText Markup Language)
+                  définit uniquement la <em>structure</em> et le contenu d'une
+                  page — les titres, paragraphes, images, vidéos. La mise en
+                  page est gérée par CSS, et les interactions par JavaScript.
+                </div>
+              </div>
+
+              <!-- Q2 -->
+              <div class="quiz-question" data-qid="2">
+                <div class="q-number">Question 02 / 03</div>
+                <div class="q-text">
+                  Quelle est la règle concernant l'attribut
+                  <code class="ic">id</code> ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span>
+                    <span>Plusieurs éléments peuvent avoir le même id</span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span>
+                    <span>L'id ne peut contenir que des chiffres</span>
+                  </div>
+                  <div class="q-option" data-value="c" data-correct="true">
+                    <span class="q-option-letter">C</span>
+                    <span>Chaque id doit être unique dans toute la page</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span>
+                    <span>L'id est obligatoire sur toutes les balises</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Correct.</strong> Un <code class="ic">id</code> est
+                  un identifiant <em>unique</em> — il ne peut apparaître qu'une
+                  seule fois dans la page. C'est ce qui permet à
+                  <code class="ic">getElementById</code> de retourner exactement
+                  un seul élément.
+                </div>
+              </div>
+
+              <!-- Q3 -->
+              <div class="quiz-question" data-qid="3">
+                <div class="q-number">Question 03 / 03</div>
+                <div class="q-text">
+                  Dans cette balise, quel est le nom de l'attribut ?<br /><code
+                    class="ic"
+                    >&lt;video src="film.mp4"&gt;</code
+                  >
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span>
+                    <span>video</span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span>
+                    <span>film.mp4</span>
+                  </div>
+                  <div class="q-option" data-value="c" data-correct="true">
+                    <span class="q-option-letter">C</span>
+                    <span>src</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span>
+                    <span>mp4</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Correct.</strong> Dans
+                  <code class="ic">src="film.mp4"</code>,
+                  <code class="ic">src</code> est le nom de l'<em>attribut</em>
+                  et <code class="ic">film.mp4</code> est sa valeur.
+                  <code class="ic">video</code> est le nom de la balise.
+                </div>
+              </div>
+            </div>
+            <!-- /quiz-body -->
+
+            <div class="quiz-footer">
+              <div class="quiz-result" id="quiz-ch1-result">
+                <div>
+                  <div class="quiz-score-display" id="quiz-ch1-score"></div>
+                  <div class="quiz-score-label">sur 3 points</div>
+                </div>
+                <div class="quiz-result-msg" id="quiz-ch1-msg"></div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: var(--space-sm);
+                  align-items: center;
+                ">
+                <button
+                  class="quiz-reset-btn"
+                  onclick="resetQuiz('quiz-ch1')"
+                  style="display: none"
+                  id="quiz-ch1-reset">
+                  ↺ Recommencer
+                </button>
+                <button
+                  class="quiz-submit-btn"
+                  id="quiz-ch1-submit"
+                  onclick="submitQuiz('quiz-ch1')"
+                  disabled>
+                  Valider les réponses
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- /quiz-ch1 -->
+        </article>
+        <!-- /ch1 -->
+
+        <div class="divider"></div>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 2 — DOM
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch2" aria-labelledby="ch2-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(255, 92, 135, 0.08);
+                border-color: rgba(255, 92, 135, 0.2);
+                color: var(--col-rose);
+              ">
+              🌳
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 02</div>
+              <h2 id="ch2-title">Le DOM — L'arbre vivant</h2>
+              <p class="chapter-desc">
+                Comment le navigateur "lit" et représente ta page HTML
+              </p>
+            </div>
+          </div>
+
+          <div class="section reveal">
+            <h3>Qu'est-ce que le DOM ?</h3>
+            <p>
+              <span class="hl">DOM</span> signifie
+              <em>Document Object Model</em>. Quand le navigateur lit un fichier
+              HTML, il le transforme en un objet JavaScript vivant en mémoire.
+              Ce n'est plus du texte — c'est un arbre d'objets qu'on peut lire,
+              modifier, et écouter.
+            </p>
+
+            <div class="analogy">
+              <div class="analogy-icon-wrap">🌳</div>
+              <div>
+                <h4>L'arbre généalogique</h4>
+                <p>
+                  Le DOM est organisé comme un
+                  <strong>arbre de famille</strong>.
+                  <code class="ic">&lt;html&gt;</code> est l'arrière-grand-père.
+                  Il a deux enfants : <code class="ic">&lt;head&gt;</code> et
+                  <code class="ic">&lt;body&gt;</code>. Le
+                  <code class="ic">&lt;body&gt;</code> peut avoir des enfants
+                  comme <code class="ic">&lt;div&gt;</code>,
+                  <code class="ic">&lt;p&gt;</code>... Chaque nœud connaît son
+                  parent et ses enfants.
+                </p>
+              </div>
+            </div>
+
+            <p>Voici comment le navigateur transforme du HTML en arbre DOM :</p>
+
+            <div class="dom-tree reveal">
+              <div class="dom-node">
+                <span style="color: var(--col-text-3)"
+                  >// DOM tree generated from the HTML below</span
+                >
+              </div>
+              <br />
+              <div class="dom-node"><span class="dom-tag">document</span></div>
+              <div class="dom-tree-line">
+                <div class="dom-node"><span class="dom-tag">html</span></div>
+                <div class="dom-tree-line">
+                  <div class="dom-node"><span class="dom-tag">body</span></div>
+                  <div class="dom-tree-line">
+                    <div class="dom-node">
+                      <span class="dom-tag">video</span>
+                      <span class="dom-attr">id</span>=<span class="dom-text"
+                        >"myVideo"</span
+                      >
+                      <span class="dom-attr">src</span>=<span class="dom-text"
+                        >"film.mp4"</span
+                      >
+                    </div>
+                    <div class="dom-node">
+                      <span class="dom-tag">p</span> →
+                      <span class="dom-text">"Click to play"</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="callout tip reveal">
+              <div class="callout-icon">🌟</div>
+              <div class="callout-body">
+                <div class="callout-title">Pourquoi c'est révolutionnaire</div>
+                <p>
+                  JavaScript peut modifier le DOM en temps réel. Tu peux ajouter
+                  des éléments, en supprimer, changer leurs propriétés — et la
+                  page se met à jour immédiatement sans recharger. C'est comme
+                  ça que les apps web modernes fonctionnent.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz 2 -->
+          <div
+            class="quiz-block reveal"
+            id="quiz-ch2"
+            data-chapter="ch2"
+            data-max-score="3">
+            <div class="quiz-header">
+              <div class="quiz-header-left">
+                <span class="quiz-badge">Quiz</span>
+                <span class="quiz-title">Le DOM — Vérification des acquis</span>
+              </div>
+              <span class="quiz-meta" id="quiz-ch2-progress"
+                >0 / 3 réponses</span
+              >
+            </div>
+            <div class="quiz-body">
+              <div class="quiz-question" data-qid="1">
+                <div class="q-number">Question 01 / 03</div>
+                <div class="q-text">Que signifie DOM ?</div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span>Dynamic Object Manager</span>
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span
+                    ><span>Document Object Model</span>
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span>Data Oriented Mapping</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span>Document Output Mode</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Document Object Model.</strong> Le DOM est la
+                  représentation en mémoire d'une page HTML sous forme d'un
+                  arbre d'objets JavaScript que le navigateur crée et maintient.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="2">
+                <div class="q-number">Question 02 / 03</div>
+                <div class="q-text">
+                  Dans l'arbre DOM, quelle balise est la "racine" (le grand-père
+                  de tout) ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span>&lt;body&gt;</span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span
+                    ><span>&lt;head&gt;</span>
+                  </div>
+                  <div class="q-option" data-value="c" data-correct="true">
+                    <span class="q-option-letter">C</span
+                    ><span>&lt;html&gt;</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span>&lt;document&gt;</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ &lt;html&gt;</strong> est la racine de l'arbre DOM.
+                  Il contient <code class="ic">&lt;head&gt;</code> et
+                  <code class="ic">&lt;body&gt;</code> comme enfants directs.
+                  <code class="ic">document</code> est l'objet JS qui enveloppe
+                  tout l'arbre.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="3">
+                <div class="q-number">Question 03 / 03</div>
+                <div class="q-text">
+                  Quand JavaScript modifie le DOM (ex: change le texte d'un
+                  élément), que se passe-t-il dans le navigateur ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span>La page se recharge entièrement</span>
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span
+                    ><span
+                      >L'affichage se met à jour immédiatement, sans
+                      rechargement</span
+                    >
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span>Le fichier HTML est modifié sur le disque</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span>Un message est envoyé au serveur</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Mise à jour immédiate.</strong> Le DOM est en
+                  mémoire RAM. Quand JavaScript le modifie, le navigateur
+                  re-dessine uniquement les parties affectées en quelques
+                  millisecondes. C'est la base du web dynamique.
+                </div>
+              </div>
+            </div>
+            <div class="quiz-footer">
+              <div class="quiz-result" id="quiz-ch2-result">
+                <div>
+                  <div class="quiz-score-display" id="quiz-ch2-score"></div>
+                  <div class="quiz-score-label">sur 3 points</div>
+                </div>
+                <div class="quiz-result-msg" id="quiz-ch2-msg"></div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: var(--space-sm);
+                  align-items: center;
+                ">
+                <button
+                  class="quiz-reset-btn"
+                  onclick="resetQuiz('quiz-ch2')"
+                  style="display: none"
+                  id="quiz-ch2-reset">
+                  ↺ Recommencer
+                </button>
+                <button
+                  class="quiz-submit-btn"
+                  id="quiz-ch2-submit"
+                  onclick="submitQuiz('quiz-ch2')"
+                  disabled>
+                  Valider les réponses
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <!-- /ch2 -->
+
+        <div class="divider"></div>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 3 — getElementById
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch3" aria-labelledby="ch3-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(0, 229, 195, 0.08);
+                border-color: rgba(0, 229, 195, 0.2);
+                color: var(--col-cyan);
+              ">
+              🔦
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 03</div>
+              <h2 id="ch3-title">getElementById — Cibler un élément</h2>
+              <p class="chapter-desc">
+                La méthode pour trouver précisément un élément dans le DOM
+              </p>
+            </div>
+          </div>
+
+          <div class="section reveal">
+            <h3>La syntaxe expliquée mot par mot</h3>
+            <p>
+              <span class="ic">getElementById</span> est une
+              <strong>méthode</strong> de l'objet
+              <span class="ic">document</span>. Elle retourne une référence vers
+              l'élément dont l'attribut <code class="ic">id</code> correspond à
+              ce qu'on lui demande.
+            </p>
+
+            <div class="analogy">
+              <div class="analogy-icon-wrap">📣</div>
+              <div>
+                <h4>L'appel par prénom dans une classe</h4>
+                <p>
+                  Imagine 30 élèves dans une salle. Chacun a un prénom unique.
+                  Quand le prof dit <em>"Karim, lève-toi"</em>, un seul élève
+                  répond. <code class="ic">getElementById("myVideo")</code> fait
+                  pareil : il "appelle" l'élément dont l'id est
+                  <code class="ic">"myVideo"</code>.
+                </p>
+              </div>
+            </div>
+
+            <div class="code-block reveal">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang">JavaScript</span>
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="cm">// HTML: &lt;video id="myVideo" src="film.mp4"&gt;&lt;/video&gt;</span>
+
+<span class="cm">// "Grab" this element by its id</span>
+<span class="kw">const</span> <span class="prop">video</span> = <span class="prop">document</span>.<span class="fn">getElementById</span>(<span class="str">'myVideo'</span>);
+<span class="cm">//              ↑             ↑              ↑</span>
+<span class="cm">// the whole page | the method | the id we search for</span>
+
+<span class="cm">// Now "video" holds a REFERENCE to the element.
+// We can read its properties:</span>
+<span class="prop">console</span>.<span class="fn">log</span>(video.<span class="prop">duration</span>);   <span class="cm">// → video duration in seconds</span>
+<span class="prop">console</span>.<span class="fn">log</span>(video.<span class="prop">src</span>);       <span class="cm">// → the video URL</span>
+<span class="prop">console</span>.<span class="fn">log</span>(video.<span class="prop">paused</span>);   <span class="cm">// → true if paused</span>
+
+<span class="cm">// And call its methods:</span>
+video.<span class="fn">play</span>();                  <span class="cm">// start playback</span>
+video.<span class="fn">pause</span>();                 <span class="cm">// pause</span>
+video.<span class="prop">currentTime</span> = <span class="num">0</span>;       <span class="cm">// seek to beginning</span></code></pre>
+            </div>
+
+            <h3>Décomposition de la syntaxe</h3>
+            <div class="table-wrap reveal">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Morceau</th>
+                    <th>Signification</th>
+                    <th>Analogie</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="ic">document</span></td>
+                    <td>L'objet représentant toute la page HTML</td>
+                    <td>La salle de classe entière</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">.</span></td>
+                    <td>
+                      Opérateur "point" — accède à une propriété ou méthode
+                    </td>
+                    <td>Le "de" : la méthode <em>de</em> l'objet</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">getElementById</span></td>
+                    <td>
+                      get = obtenir · Element = élément · ById = par son id
+                    </td>
+                    <td>L'appel par prénom</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">('myVideo')</span></td>
+                    <td>L'argument : l'id qu'on cherche, entre guillemets</td>
+                    <td>Le prénom qu'on prononce</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="callout warning reveal">
+              <div class="callout-icon">⚠️</div>
+              <div class="callout-body">
+                <div class="callout-title">Piège fréquent — null</div>
+                <p>
+                  Si aucun élément n'a cet id,
+                  <code class="ic">getElementById</code> retourne
+                  <code class="ic">null</code>. Appeler
+                  <code class="ic">null.play()</code> fait planter le programme
+                  ! C'est pourquoi on vérifie
+                  <code class="ic">video.readyState >= 1</code> avant d'utiliser
+                  les propriétés.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz 3 -->
+          <div
+            class="quiz-block reveal"
+            id="quiz-ch3"
+            data-chapter="ch3"
+            data-max-score="3">
+            <div class="quiz-header">
+              <div class="quiz-header-left">
+                <span class="quiz-badge">Quiz</span>
+                <span class="quiz-title">getElementById — Vérification</span>
+              </div>
+              <span class="quiz-meta" id="quiz-ch3-progress"
+                >0 / 3 réponses</span
+              >
+            </div>
+            <div class="quiz-body">
+              <div class="quiz-question" data-qid="1">
+                <div class="q-number">Question 01 / 03</div>
+                <div class="q-text">
+                  Que retourne
+                  <code class="ic">document.getElementById('myVideo')</code> si
+                  l'élément existe ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span>Le texte "myVideo"</span>
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span
+                    ><span>Une référence vers l'élément HTML dans le DOM</span>
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span>Un tableau de tous les éléments video</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span
+                      >Le contenu HTML de l'élément sous forme de string</span
+                    >
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Une référence vers l'élément.</strong> Ce n'est pas
+                  une copie, c'est un pointeur direct vers l'objet dans le DOM.
+                  Toute modification sur cette référence change l'élément réel
+                  dans la page.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="2">
+                <div class="q-number">Question 02 / 03</div>
+                <div class="q-text">
+                  Que retourne <code class="ic">getElementById</code> si aucun
+                  élément n'a cet id ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span>Une erreur est lancée automatiquement</span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span
+                    ><span>Une chaîne vide ""</span>
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span><span>undefined</span>
+                  </div>
+                  <div class="q-option" data-value="d" data-correct="true">
+                    <span class="q-option-letter">D</span><span>null</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ null.</strong> Aucune erreur n'est lancée
+                  automatiquement. C'est pour ça qu'on doit vérifier
+                  <code class="ic">if (element !== null)</code> avant de
+                  l'utiliser, sinon appeler une méthode sur
+                  <code class="ic">null</code> cause une <em>TypeError</em>.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="3">
+                <div class="q-number">Question 03 / 03</div>
+                <div class="q-text">
+                  Quelle ligne est correcte pour mettre en pause une vidéo avec
+                  l'id "player" ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span
+                      ><code class="ic"
+                        >document.getElementById("player").stop()</code
+                      ></span
+                    >
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span
+                    ><span
+                      ><code class="ic"
+                        >document.getElementById("player").pause()</code
+                      ></span
+                    >
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span
+                      ><code class="ic"
+                        >getElementById.document("player").pause()</code
+                      ></span
+                    >
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span
+                      ><code class="ic">document.pause("player")</code></span
+                    >
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ .pause()</strong> est la méthode standard des
+                  éléments vidéo/audio HTML.
+                  <code class="ic">.stop()</code> n'existe pas pour la balise
+                  video. La syntaxe correcte :
+                  <code class="ic">document.getElementById(id).methode()</code>.
+                </div>
+              </div>
+            </div>
+            <div class="quiz-footer">
+              <div class="quiz-result" id="quiz-ch3-result">
+                <div>
+                  <div class="quiz-score-display" id="quiz-ch3-score"></div>
+                  <div class="quiz-score-label">sur 3 points</div>
+                </div>
+                <div class="quiz-result-msg" id="quiz-ch3-msg"></div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: var(--space-sm);
+                  align-items: center;
+                ">
+                <button
+                  class="quiz-reset-btn"
+                  onclick="resetQuiz('quiz-ch3')"
+                  style="display: none"
+                  id="quiz-ch3-reset">
+                  ↺ Recommencer
+                </button>
+                <button
+                  class="quiz-submit-btn"
+                  id="quiz-ch3-submit"
+                  onclick="submitQuiz('quiz-ch3')"
+                  disabled>
+                  Valider les réponses
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <!-- /ch3 -->
+
+        <div class="divider"></div>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 4 — Events
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch4" aria-labelledby="ch4-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(245, 166, 35, 0.08);
+                border-color: rgba(245, 166, 35, 0.2);
+                color: var(--col-amber);
+              ">
+              🔔
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 04</div>
+              <h2 id="ch4-title">Les événements</h2>
+              <p class="chapter-desc">
+                Réagir à ce qui se passe dans le navigateur
+              </p>
+            </div>
+          </div>
+
+          <div class="section reveal">
+            <h3>Qu'est-ce qu'un événement ?</h3>
+            <p>
+              Un <span class="hl">événement</span> est quelque chose qui se
+              passe — un clic, une touche enfoncée, ou dans notre cas : une
+              vidéo qui finit de charger ses métadonnées. Le navigateur "émet"
+              un signal, et on peut écrire du code qui "écoute" ce signal.
+            </p>
+
+            <div class="analogy">
+              <div class="analogy-icon-wrap">🔔</div>
+              <div>
+                <h4>La sonnette de la porte</h4>
+                <p>
+                  Une sonnette est branchée à ta porte. Quand quelqu'un
+                  <strong>appuie</strong> (événement), ça
+                  <strong>sonne</strong> (la fonction se déclenche). Tu n'as pas
+                  à surveiller en permanence — la sonnette le fait pour toi.
+                </p>
+              </div>
+            </div>
+
+            <h3>Les événements vidéo essentiels</h3>
+            <div class="table-wrap reveal">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Événement</th>
+                    <th>Quand ça se déclenche</th>
+                    <th>Usage typique</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="ic">loadedmetadata</span></td>
+                    <td>La vidéo a chargé sa durée et dimensions</td>
+                    <td>Afficher la durée totale ✅</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">play</span></td>
+                    <td>La lecture démarre</td>
+                    <td>Changer l'icône en ⏸</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">pause</span></td>
+                    <td>La vidéo est en pause</td>
+                    <td>Changer l'icône en ▶</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">ended</span></td>
+                    <td>La vidéo est terminée</td>
+                    <td>Passer à la suivante</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">timeupdate</span></td>
+                    <td>La position avance (~ 4 fois/sec)</td>
+                    <td>Barre de progression</td>
+                  </tr>
+                  <tr>
+                    <td><span class="ic">error</span></td>
+                    <td>Erreur de chargement</td>
+                    <td>Afficher un message d'erreur</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Le readyState — état de chargement</h3>
+            <div class="code-block reveal">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang">JavaScript</span>
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="cm">// readyState: 5 loading levels</span>
+video.<span class="prop">readyState</span> === <span class="num">0</span>  <span class="cm">// HAVE_NOTHING   — nothing loaded yet</span>
+video.<span class="prop">readyState</span> === <span class="num">1</span>  <span class="cm">// HAVE_METADATA  — duration & size known ✅</span>
+video.<span class="prop">readyState</span> === <span class="num">2</span>  <span class="cm">// HAVE_CURRENT_DATA — current frame available</span>
+video.<span class="prop">readyState</span> === <span class="num">3</span>  <span class="cm">// HAVE_FUTURE_DATA  — can play a bit</span>
+video.<span class="prop">readyState</span> === <span class="num">4</span>  <span class="cm">// HAVE_ENOUGH_DATA  — can play to the end</span>
+
+<span class="cm">// In our component, we check >= 1 to ensure duration exists.
+// This is a fallback in case loadedmetadata already fired.</span>
+<span class="kw">if</span> (video.<span class="prop">readyState</span> >= <span class="num">1</span> && video.<span class="prop">duration</span>) {
+  <span class="prop">window</span>.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="str">'duration:'</span> + video.<span class="prop">duration</span>);
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Quiz 4 -->
+          <div
+            class="quiz-block reveal"
+            id="quiz-ch4"
+            data-chapter="ch4"
+            data-max-score="3">
+            <div class="quiz-header">
+              <div class="quiz-header-left">
+                <span class="quiz-badge">Quiz</span>
+                <span class="quiz-title">Événements — Vérification</span>
+              </div>
+              <span class="quiz-meta" id="quiz-ch4-progress"
+                >0 / 3 réponses</span
+              >
+            </div>
+            <div class="quiz-body">
+              <div class="quiz-question" data-qid="1">
+                <div class="q-number">Question 01 / 03</div>
+                <div class="q-text">
+                  Quel événement doit-on écouter pour connaître la durée d'une
+                  vidéo HTML ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span><span>play</span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span><span>load</span>
+                  </div>
+                  <div class="q-option" data-value="c" data-correct="true">
+                    <span class="q-option-letter">C</span
+                    ><span>loadedmetadata</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span><span>canplay</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ loadedmetadata.</strong> Cet événement se déclenche
+                  quand le navigateur a téléchargé les métadonnées de la vidéo
+                  (durée, dimensions, pistes audio) — mais pas nécessairement le
+                  contenu vidéo lui-même.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="2">
+                <div class="q-number">Question 02 / 03</div>
+                <div class="q-text">
+                  Que vaut <code class="ic">video.readyState</code> quand la
+                  durée de la vidéo est disponible ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span><span>0</span>
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span><span>1 ou plus</span>
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span>4 exactement</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span><span>true</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ 1 ou plus (>= 1).</strong> Le niveau 1
+                  (HAVE_METADATA) signifie que les métadonnées sont disponibles.
+                  On vérifie <code class="ic">readyState >= 1</code> pour
+                  couvrir tous les niveaux au-dessus.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="3">
+                <div class="q-number">Question 03 / 03</div>
+                <div class="q-text">
+                  Que vaut <code class="ic">video.duration</code> avant que les
+                  métadonnées soient chargées ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span><span>0</span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span><span>null</span>
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span><span>undefined</span>
+                  </div>
+                  <div class="q-option" data-value="d" data-correct="true">
+                    <span class="q-option-letter">D</span
+                    ><span>NaN (Not a Number)</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ NaN.</strong> "Not a Number" est une valeur spéciale
+                  JavaScript qui signifie "pas un nombre valide". On teste
+                  <code class="ic">!isNaN(duration)</code> avant d'utiliser la
+                  valeur pour éviter d'envoyer une donnée invalide.
+                </div>
+              </div>
+            </div>
+            <div class="quiz-footer">
+              <div class="quiz-result" id="quiz-ch4-result">
+                <div>
+                  <div class="quiz-score-display" id="quiz-ch4-score"></div>
+                  <div class="quiz-score-label">sur 3 points</div>
+                </div>
+                <div class="quiz-result-msg" id="quiz-ch4-msg"></div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: var(--space-sm);
+                  align-items: center;
+                ">
+                <button
+                  class="quiz-reset-btn"
+                  onclick="resetQuiz('quiz-ch4')"
+                  style="display: none"
+                  id="quiz-ch4-reset">
+                  ↺ Recommencer
+                </button>
+                <button
+                  class="quiz-submit-btn"
+                  id="quiz-ch4-submit"
+                  onclick="submitQuiz('quiz-ch4')"
+                  disabled>
+                  Valider les réponses
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <!-- /ch4 -->
+
+        <div class="divider"></div>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 5 — addEventListener
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch5" aria-labelledby="ch5-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(139, 124, 246, 0.08);
+                border-color: rgba(139, 124, 246, 0.2);
+                color: var(--col-purple);
+              ">
+              👂
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 05</div>
+              <h2 id="ch5-title">addEventListener — Écouter les événements</h2>
+              <p class="chapter-desc">Brancher une fonction à un événement</p>
+            </div>
+          </div>
+
+          <div class="section reveal">
+            <h3>La syntaxe complète</h3>
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang">JavaScript</span>
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="cm">// Basic structure:</span>
+element.<span class="fn">addEventListener</span>(<span class="str">'eventName'</span>, functionToCall);
+
+<span class="cm">// ─── Example 1: arrow function ───</span>
+video.<span class="fn">addEventListener</span>(<span class="str">'loadedmetadata'</span>, () => {
+  <span class="cm">// This code runs ONLY when loadedmetadata fires</span>
+  <span class="prop">console</span>.<span class="fn">log</span>(<span class="str">'Duration:'</span>, video.<span class="prop">duration</span>, <span class="str">'seconds'</span>);
+  <span class="prop">window</span>.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="str">'duration:'</span> + video.<span class="prop">duration</span>);
+});
+
+<span class="cm">// ─── Example 2: named function (same result) ───</span>
+<span class="kw">function</span> <span class="fn">onMetadataLoaded</span>() {
+  <span class="prop">console</span>.<span class="fn">log</span>(<span class="str">'Duration:'</span>, video.<span class="prop">duration</span>);
+}
+video.<span class="fn">addEventListener</span>(<span class="str">'loadedmetadata'</span>, onMetadataLoaded);
+<span class="cm">//                                        ↑ NO parentheses! We pass the function
+//                                           reference, not call it immediately.</span>
+
+<span class="cm">// ─── Multiple listeners on the same element ───</span>
+video.<span class="fn">addEventListener</span>(<span class="str">'pause'</span>, () => window.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="str">'state:paused'</span>));
+video.<span class="fn">addEventListener</span>(<span class="str">'play'</span>,  () => window.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="str">'state:playing'</span>));</code></pre>
+            </div>
+
+            <div class="callout danger reveal">
+              <div class="callout-icon">❌</div>
+              <div class="callout-body">
+                <div class="callout-title">
+                  Erreur classique — les parenthèses
+                </div>
+                <p>
+                  <code class="ic"
+                    >addEventListener('click', maFonction())</code
+                  >
+                  avec parenthèses
+                  <strong>appelle la fonction immédiatement</strong> au lieu de
+                  l'enregistrer. Il faut écrire
+                  <code class="ic">addEventListener('click', maFonction)</code>
+                  sans parenthèses pour passer la référence.
+                </p>
+              </div>
+            </div>
+
+            <h3>Déroulement pas à pas</h3>
+            <div class="steps reveal">
+              <div class="step">
+                <div
+                  class="step-num"
+                  style="
+                    background: rgba(0, 229, 195, 0.12);
+                    color: var(--col-cyan);
+                  ">
+                  1
+                </div>
+                <div class="step-content">
+                  <h4>La page HTML se charge</h4>
+                  <p>
+                    Le navigateur crée le DOM. La balise &lt;video&gt; existe en
+                    mémoire.
+                  </p>
+                </div>
+              </div>
+              <div class="step">
+                <div
+                  class="step-num"
+                  style="
+                    background: rgba(255, 92, 135, 0.12);
+                    color: var(--col-rose);
+                  ">
+                  2
+                </div>
+                <div class="step-content">
+                  <h4>Le script JavaScript s'exécute</h4>
+                  <p>
+                    <code class="ic">getElementById</code> attrape la vidéo.
+                    <code class="ic">addEventListener</code> enregistre les
+                    écouteurs — les fonctions ne s'exécutent pas encore.
+                  </p>
+                </div>
+              </div>
+              <div class="step">
+                <div
+                  class="step-num"
+                  style="
+                    background: rgba(139, 124, 246, 0.12);
+                    color: var(--col-purple);
+                  ">
+                  3
+                </div>
+                <div class="step-content">
+                  <h4>La vidéo charge ses métadonnées</h4>
+                  <p>
+                    Le navigateur émet l'événement
+                    <code class="ic">loadedmetadata</code>. Tous les listeners
+                    enregistrés sont appelés automatiquement.
+                  </p>
+                </div>
+              </div>
+              <div class="step">
+                <div
+                  class="step-num"
+                  style="
+                    background: rgba(245, 166, 35, 0.12);
+                    color: var(--col-amber);
+                  ">
+                  4
+                </div>
+                <div class="step-content">
+                  <h4>La callback s'exécute</h4>
+                  <p>
+                    <code class="ic">video.duration</code> est disponible. On
+                    envoie la valeur à React Native via
+                    <code class="ic">postMessage</code>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <!-- /ch5 -->
+
+        <div class="divider"></div>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 6 — <video> element
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch6" aria-labelledby="ch6-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(255, 92, 135, 0.08);
+                border-color: rgba(255, 92, 135, 0.2);
+                color: var(--col-rose);
+              ">
+              🎬
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 06</div>
+              <h2 id="ch6-title">La balise &lt;video&gt; et ses propriétés</h2>
+              <p class="chapter-desc">
+                Tout ce qu'un élément vidéo HTML peut faire
+              </p>
+            </div>
+          </div>
+
+          <div class="section reveal">
+            <h3>Attributs HTML vs Propriétés JavaScript</h3>
+            <div class="code-block">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang">HTML — Attributes (in the tag)</span>
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="tag">&lt;video</span>
+  <span class="attr">id</span>=<span class="val">"myVideo"</span>       <span class="cm">&lt;!-- unique identifier --&gt;</span>
+  <span class="attr">src</span>=<span class="val">"film.mp4"</span>     <span class="cm">&lt;!-- video URL --&gt;</span>
+  <span class="attr">autoplay</span>            <span class="cm">&lt;!-- auto-start (boolean flag) --&gt;</span>
+  <span class="attr">muted</span>               <span class="cm">&lt;!-- required for autoplay in most browsers --&gt;</span>
+  <span class="attr">playsinline</span>         <span class="cm">&lt;!-- play inline, not fullscreen (critical on iOS) --&gt;</span>
+  <span class="attr">controls</span>            <span class="cm">&lt;!-- show native browser controls --&gt;</span>
+  <span class="attr">loop</span>                <span class="cm">&lt;!-- loop at end --&gt;</span>
+  <span class="attr">style</span>=<span class="val">"width:100%"</span>  <span class="cm">&lt;!-- inline CSS --&gt;</span>
+<span class="tag">&gt;&lt;/video&gt;</span></code></pre>
+            </div>
+
+            <div class="code-block reveal">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang"
+                    >JavaScript — Properties &amp; Methods</span
+                  >
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="kw">const</span> video = <span class="prop">document</span>.<span class="fn">getElementById</span>(<span class="str">'myVideo'</span>);
+
+<span class="cm">// ── READ properties ──</span>
+video.<span class="prop">duration</span>      <span class="cm">// total duration in seconds (e.g. 120.5)</span>
+video.<span class="prop">currentTime</span>  <span class="cm">// current position in seconds</span>
+video.<span class="prop">paused</span>       <span class="cm">// true if paused</span>
+video.<span class="prop">ended</span>        <span class="cm">// true if finished</span>
+video.<span class="prop">muted</span>        <span class="cm">// true if muted</span>
+video.<span class="prop">volume</span>       <span class="cm">// 0.0 to 1.0</span>
+video.<span class="prop">readyState</span>  <span class="cm">// loading level (0-4)</span>
+video.<span class="prop">src</span>         <span class="cm">// video URL</span>
+
+<span class="cm">// ── WRITE properties ──</span>
+video.<span class="prop">currentTime</span> = <span class="num">30</span>;    <span class="cm">// seek to 30 seconds</span>
+video.<span class="prop">volume</span> = <span class="num">0.5</span>;        <span class="cm">// set volume to 50%</span>
+video.<span class="prop">muted</span> = <span class="kw">true</span>;        <span class="cm">// mute</span>
+video.<span class="prop">src</span> = <span class="str">'other.mp4'</span>;   <span class="cm">// change source</span>
+video.<span class="prop">playbackRate</span> = <span class="num">2</span>;    <span class="cm">// 2x speed</span>
+
+<span class="cm">// ── METHODS ──</span>
+video.<span class="fn">play</span>();    <span class="cm">// start (returns a Promise)</span>
+video.<span class="fn">pause</span>();   <span class="cm">// pause</span>
+video.<span class="fn">load</span>();    <span class="cm">// reload the source</span></code></pre>
+            </div>
+          </div>
+        </article>
+        <!-- /ch6 -->
+
+        <div class="divider"></div>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 7 — postMessage
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch7" aria-labelledby="ch7-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(0, 229, 195, 0.08);
+                border-color: rgba(0, 229, 195, 0.2);
+                color: var(--col-cyan);
+              ">
+              📮
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 07</div>
+              <h2 id="ch7-title">
+                postMessage — Le pont WebView ↔ React Native
+              </h2>
+              <p class="chapter-desc">
+                Comment deux mondes isolés communiquent entre eux
+              </p>
+            </div>
+          </div>
+
+          <div class="section reveal">
+            <h3>Le problème de l'isolation</h3>
+            <p>
+              Un <span class="hl">WebView</span> fonctionne dans son propre
+              univers isolé — comme une bulle. Le JavaScript dans la page ne
+              peut pas directement appeler des fonctions React Native, et
+              inversement. On a besoin d'un <span class="hl">pont</span>.
+            </p>
+
+            <div class="analogy">
+              <div class="analogy-icon-wrap">📮</div>
+              <div>
+                <h4>La boîte aux lettres</h4>
+                <p>
+                  Le WebView et React Native sont comme deux voisins qui ne
+                  peuvent pas entrer chez l'autre. Pour communiquer, ils
+                  déposent des <strong>messages</strong> dans une boîte aux
+                  lettres. <code class="ic">postMessage</code> = déposer un
+                  message. <code class="ic">onMessage</code> = vérifier la
+                  boîte.
+                </p>
+              </div>
+            </div>
+
+            <div class="code-block reveal">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang"
+                    >JavaScript — Inside WebView HTML</span
+                  >
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="cm">// window.ReactNativeWebView is injected by react-native-webview</span>
+
+<span class="cm">// Send a simple string</span>
+<span class="prop">window</span>.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="str">'Hello React Native!'</span>);
+
+<span class="cm">// We prefix messages to distinguish types</span>
+<span class="prop">window</span>.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="str">'duration:'</span> + video.<span class="prop">duration</span>);
+<span class="cm">// → sends e.g.: "duration:120.5"</span>
+
+<span class="prop">window</span>.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="str">'state:paused'</span>);
+
+<span class="cm">// Or use JSON for complex data</span>
+<span class="prop">window</span>.ReactNativeWebView.<span class="fn">postMessage</span>(<span class="prop">JSON</span>.<span class="fn">stringify</span>({
+  type: <span class="str">'videoInfo'</span>,
+  duration: video.<span class="prop">duration</span>,
+  width: video.<span class="prop">videoWidth</span>,
+  height: video.<span class="prop">videoHeight</span>
+}));</code></pre>
+            </div>
+
+            <div class="code-block reveal">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang"
+                    >TypeScript — React Native component</span
+                  >
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="cm">// onMessage receives all messages sent from the WebView</span>
+<span class="kw">const</span> <span class="fn">onMessage</span> = (event: any) => {
+  <span class="kw">const</span> data = event.nativeEvent.data;  <span class="cm">// always a string</span>
+
+  <span class="kw">if</span> (data.<span class="fn">startsWith</span>(<span class="str">'duration:'</span>)) {
+    <span class="kw">const</span> duration = <span class="fn">parseFloat</span>(data.<span class="fn">replace</span>(<span class="str">'duration:'</span>, <span class="str">''</span>));
+    <span class="cm">// parseFloat converts "120.5" (string) → 120.5 (number)</span>
+    <span class="kw">if</span> (!<span class="fn">isNaN</span>(duration)) <span class="fn">onDuration</span>?.(duration);
+
+  } <span class="kw">else if</span> (data === <span class="str">'state:paused'</span>) {
+    <span class="fn">setIsPlaying</span>(<span class="kw">false</span>);
+
+  } <span class="kw">else if</span> (data === <span class="str">'state:playing'</span>) {
+    <span class="fn">setIsPlaying</span>(<span class="kw">true</span>);
+  }
+};</code></pre>
+            </div>
+          </div>
+
+          <!-- Quiz 7 -->
+          <div
+            class="quiz-block reveal"
+            id="quiz-ch7"
+            data-chapter="ch7"
+            data-max-score="3">
+            <div class="quiz-header">
+              <div class="quiz-header-left">
+                <span class="quiz-badge">Quiz</span>
+                <span class="quiz-title">postMessage — Vérification</span>
+              </div>
+              <span class="quiz-meta" id="quiz-ch7-progress"
+                >0 / 3 réponses</span
+              >
+            </div>
+            <div class="quiz-body">
+              <div class="quiz-question" data-qid="1">
+                <div class="q-number">Question 01 / 03</div>
+                <div class="q-text">
+                  Quel type de données peut envoyer
+                  <code class="ic">postMessage</code> ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span
+                      >N'importe quel type JavaScript (object, array,
+                      number...)</span
+                    >
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span
+                    ><span>Uniquement des chaînes de texte (strings)</span>
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span>Des fonctions JavaScript</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span>Des fichiers binaires</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Uniquement des strings.</strong> C'est pourquoi on
+                  utilise des préfixes comme
+                  <code class="ic">"duration:"</code> ou
+                  <code class="ic">"state:"</code> pour distinguer les types, et
+                  <code class="ic">JSON.stringify()</code> pour sérialiser des
+                  objets complexes en string.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="2">
+                <div class="q-number">Question 02 / 03</div>
+                <div class="q-text">
+                  Dans React Native, comment accède-t-on au message reçu depuis
+                  un WebView ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span><code class="ic">event.data</code></span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span
+                    ><span><code class="ic">event.message</code></span>
+                  </div>
+                  <div class="q-option" data-value="c" data-correct="true">
+                    <span class="q-option-letter">C</span
+                    ><span><code class="ic">event.nativeEvent.data</code></span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span><code class="ic">event.payload</code></span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ event.nativeEvent.data.</strong> Dans
+                  react-native-webview, le gestionnaire
+                  <code class="ic">onMessage</code> reçoit un objet événement
+                  React Native. Le message se trouve dans
+                  <code class="ic">event.nativeEvent.data</code> (toujours une
+                  string).
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="3">
+                <div class="q-number">Question 03 / 03</div>
+                <div class="q-text">
+                  Pourquoi utilise-t-on des préfixes comme
+                  <code class="ic">"duration:"</code> dans les messages ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span
+                      >C'est obligatoire pour que postMessage fonctionne</span
+                    >
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span
+                    ><span>Pour crypter le message</span>
+                  </div>
+                  <div class="q-option" data-value="c" data-correct="true">
+                    <span class="q-option-letter">C</span
+                    ><span
+                      >Pour distinguer les différents types de messages
+                      reçus</span
+                    >
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span>Pour améliorer les performances</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Pour distinguer les types.</strong> Puisque tous les
+                  messages arrivent dans le même handler
+                  <code class="ic">onMessage</code> et sont tous des strings, le
+                  préfixe agit comme un "en-tête" permettant d'identifier la
+                  nature du message et de le traiter correctement.
+                </div>
+              </div>
+            </div>
+            <div class="quiz-footer">
+              <div class="quiz-result" id="quiz-ch7-result">
+                <div>
+                  <div class="quiz-score-display" id="quiz-ch7-score"></div>
+                  <div class="quiz-score-label">sur 3 points</div>
+                </div>
+                <div class="quiz-result-msg" id="quiz-ch7-msg"></div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: var(--space-sm);
+                  align-items: center;
+                ">
+                <button
+                  class="quiz-reset-btn"
+                  onclick="resetQuiz('quiz-ch7')"
+                  style="display: none"
+                  id="quiz-ch7-reset">
+                  ↺ Recommencer
+                </button>
+                <button
+                  class="quiz-submit-btn"
+                  id="quiz-ch7-submit"
+                  onclick="submitQuiz('quiz-ch7')"
+                  disabled>
+                  Valider les réponses
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <!-- /ch7 -->
+
+        <div class="divider"></div>
+
+        <!-- ══════════════════════════════════════════════
+           CHAPTER 8 — injectJavaScript
+      ══════════════════════════════════════════════ -->
+        <article class="chapter" id="ch8" aria-labelledby="ch8-title">
+          <div class="chapter-header">
+            <div
+              class="chapter-icon"
+              style="
+                background: rgba(245, 166, 35, 0.08);
+                border-color: rgba(245, 166, 35, 0.2);
+                color: var(--col-amber);
+              ">
+              🎮
+            </div>
+            <div class="chapter-meta">
+              <div class="chapter-num-tag">Chapitre 08</div>
+              <h2 id="ch8-title">injectJavaScript — Commander le WebView</h2>
+              <p class="chapter-desc">
+                Envoyer des commandes de React Native vers la page HTML
+              </p>
+            </div>
+          </div>
+
+          <div class="section reveal">
+            <h3>Le sens inverse</h3>
+            <p>
+              Si <span class="ic">postMessage</span> envoie des données du
+              WebView → React Native,
+              <span class="ic">injectJavaScript</span> fait l'inverse : envoie
+              du code JavaScript depuis React Native → exécuté dans la page
+              HTML.
+            </p>
+
+            <div class="analogy">
+              <div class="analogy-icon-wrap">🎮</div>
+              <div>
+                <h4>La télécommande universelle</h4>
+                <p>
+                  Le WebView est une TV.
+                  <code class="ic">injectJavaScript</code> c'est la télécommande
+                  — tu appuies sur "Pause" depuis ton canapé (React Native), et
+                  la TV (WebView) exécute la commande. La TV ne décide pas, elle
+                  obéit.
+                </p>
+              </div>
+            </div>
+
+            <div class="code-block reveal">
+              <div class="code-header">
+                <div class="code-header-left">
+                  <div class="code-dots">
+                    <span style="background: #ff5f57"></span
+                    ><span style="background: #febc2e"></span
+                    ><span style="background: #28c840"></span>
+                  </div>
+                  <span class="code-lang">TypeScript — React Native</span>
+                </div>
+                <button class="copy-btn" onclick="copyCode(this)">copy</button>
+              </div>
+              <pre><code><span class="kw">const</span> webViewRef = <span class="fn">useRef</span>&lt;WebView&gt;(<span class="kw">null</span>);
+
+<span class="cm">// ─── Pause ───</span>
+<span class="kw">const</span> <span class="fn">pause</span> = () => {
+  webViewRef.current?.<span class="fn">injectJavaScript</span>(`
+    document.<span class="fn">getElementById</span>(<span class="str">'myVideo'</span>).<span class="fn">pause</span>();
+    <span class="kw">true</span>;  <span class="cm">// REQUIRED — injectJavaScript must return a value on iOS</span>
+  `);
+};
+
+<span class="cm">// ─── Play ───</span>
+<span class="kw">const</span> <span class="fn">play</span> = () => {
+  webViewRef.current?.<span class="fn">injectJavaScript</span>(`
+    document.<span class="fn">getElementById</span>(<span class="str">'myVideo'</span>).<span class="fn">play</span>();
+    <span class="kw">true</span>;
+  `);
+};
+
+<span class="cm">// ─── Restart from beginning ───</span>
+<span class="kw">const</span> <span class="fn">restart</span> = () => {
+  webViewRef.current?.<span class="fn">injectJavaScript</span>(`
+    <span class="kw">const</span> v = document.<span class="fn">getElementById</span>(<span class="str">'myVideo'</span>);
+    v.<span class="prop">currentTime</span> = <span class="num">0</span>;
+    v.<span class="fn">play</span>();
+    <span class="kw">true</span>;
+  `);
+};
+
+<span class="cm">// ─── Change source SECURELY (via JSON.stringify) ───</span>
+<span class="kw">const</span> <span class="fn">changeSource</span> = (url: string) => {
+  <span class="kw">const</span> safeUrl = <span class="prop">JSON</span>.<span class="fn">stringify</span>(url); <span class="cm">// escapes quotes & special chars</span>
+  webViewRef.current?.<span class="fn">injectJavaScript</span>(`
+    <span class="kw">const</span> v = document.<span class="fn">getElementById</span>(<span class="str">'myVideo'</span>);
+    v.<span class="prop">src</span> = ${safeUrl};  <span class="cm">// safe: no injection possible</span>
+    v.<span class="fn">load</span>();
+    v.<span class="fn">play</span>();
+    <span class="kw">true</span>;
+  `);
+};</code></pre>
+            </div>
+
+            <div class="callout danger reveal">
+              <div class="callout-icon">🔐</div>
+              <div class="callout-body">
+                <div class="callout-title">Sécurité — Injection de code</div>
+                <p>
+                  N'interpolez JAMAIS une URL directement dans le code injecté
+                  sans <code class="ic">JSON.stringify()</code>. Une URL
+                  corrompue comme
+                  <code class="ic">video.mp4"; alert("Piraté!"); //</code>
+                  s'exécuterait dans la page.
+                  <code class="ic">JSON.stringify()</code> échappe
+                  automatiquement tous les caractères dangereux.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quiz 8 -->
+          <div
+            class="quiz-block reveal"
+            id="quiz-ch8"
+            data-chapter="ch8"
+            data-max-score="3">
+            <div class="quiz-header">
+              <div class="quiz-header-left">
+                <span class="quiz-badge">Quiz</span>
+                <span class="quiz-title">injectJavaScript — Quiz final</span>
+              </div>
+              <span class="quiz-meta" id="quiz-ch8-progress"
+                >0 / 3 réponses</span
+              >
+            </div>
+            <div class="quiz-body">
+              <div class="quiz-question" data-qid="1">
+                <div class="q-number">Question 01 / 03</div>
+                <div class="q-text">
+                  Pourquoi doit-on terminer le code injecté par
+                  <code class="ic">true;</code> ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span>Pour indiquer que le code est valide</span>
+                  </div>
+                  <div class="q-option" data-value="b" data-correct="true">
+                    <span class="q-option-letter">B</span
+                    ><span
+                      >Sur iOS, injectJavaScript doit retourner une valeur,
+                      sinon l'app peut planter</span
+                    >
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span>C'est la syntaxe JavaScript obligatoire</span>
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span>Pour activer le mode sécurisé</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Requis sur iOS.</strong>
+                  <code class="ic">injectJavaScript</code> évalue le code et
+                  attend une valeur de retour. Si le code retourne
+                  <code class="ic">undefined</code>, l'app iOS peut se fermer
+                  inopinément. <code class="ic">true;</code> est la convention
+                  la plus simple.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="2">
+                <div class="q-number">Question 02 / 03</div>
+                <div class="q-text">
+                  Que fait <code class="ic">JSON.stringify(url)</code> quand
+                  l'url est <code class="ic">film.mp4"</code> (avec un
+                  guillemet) ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span>Rien, elle retourne l'url telle quelle</span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span
+                    ><span>Elle supprime le guillemet</span>
+                  </div>
+                  <div class="q-option" data-value="c" data-correct="true">
+                    <span class="q-option-letter">C</span
+                    ><span
+                      >Elle échappe le guillemet en <code class="ic">\"</code>,
+                      le rendant inoffensif</span
+                    >
+                  </div>
+                  <div class="q-option" data-value="d">
+                    <span class="q-option-letter">D</span
+                    ><span>Elle lance une erreur</span>
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ Elle échappe en <code class="ic">\"</code>.</strong>
+                  <code class="ic">JSON.stringify</code> entoure la chaîne de
+                  guillemets et échappe tous les caractères spéciaux
+                  (guillemets, backslashes, sauts de ligne...). Le résultat est
+                  toujours une string JavaScript valide et sûre.
+                </div>
+              </div>
+
+              <div class="quiz-question" data-qid="3">
+                <div class="q-number">Question 03 / 03</div>
+                <div class="q-text">
+                  Pour recommencer une vidéo depuis le début via
+                  <code class="ic">injectJavaScript</code>, quelle combinaison
+                  est correcte ?
+                </div>
+                <div class="q-options">
+                  <div class="q-option" data-value="a">
+                    <span class="q-option-letter">A</span
+                    ><span><code class="ic">video.restart()</code></span>
+                  </div>
+                  <div class="q-option" data-value="b">
+                    <span class="q-option-letter">B</span
+                    ><span
+                      ><code class="ic">video.currentTime = 0</code>
+                      seulement</span
+                    >
+                  </div>
+                  <div class="q-option" data-value="c">
+                    <span class="q-option-letter">C</span
+                    ><span><code class="ic">video.play()</code> seulement</span>
+                  </div>
+                  <div class="q-option" data-value="d" data-correct="true">
+                    <span class="q-option-letter">D</span
+                    ><span
+                      ><code class="ic">video.currentTime = 0</code> puis
+                      <code class="ic">video.play()</code></span
+                    >
+                  </div>
+                </div>
+                <div class="q-explanation">
+                  <strong>✓ currentTime = 0 puis play().</strong> Il n'existe
+                  pas de méthode <code class="ic">restart()</code>. On
+                  repositionne d'abord la tête de lecture au début (<code
+                    class="ic"
+                    >currentTime = 0</code
+                  >), puis on relance la lecture (<code class="ic">play()</code
+                  >).
+                </div>
+              </div>
+            </div>
+            <div class="quiz-footer">
+              <div class="quiz-result" id="quiz-ch8-result">
+                <div>
+                  <div class="quiz-score-display" id="quiz-ch8-score"></div>
+                  <div class="quiz-score-label">sur 3 points</div>
+                </div>
+                <div class="quiz-result-msg" id="quiz-ch8-msg"></div>
+              </div>
+              <div
+                style="
+                  display: flex;
+                  gap: var(--space-sm);
+                  align-items: center;
+                ">
+                <button
+                  class="quiz-reset-btn"
+                  onclick="resetQuiz('quiz-ch8')"
+                  style="display: none"
+                  id="quiz-ch8-reset">
+                  ↺ Recommencer
+                </button>
+                <button
+                  class="quiz-submit-btn"
+                  id="quiz-ch8-submit"
+                  onclick="submitQuiz('quiz-ch8')"
+                  disabled>
+                  Valider les réponses
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+        <!-- /ch8 -->
+      </main>
+      <!-- /main-content -->
+    </div>
+    <!-- /page-body -->
+
+    <!-- ══════════════════════════════════════════════════════
+       FOOTER
+       - Brand column
+       - Chapters quick-links
+       - Concepts reference
+       - Resources column
+  ══════════════════════════════════════════════════════ -->
+    <footer id="site-footer" role="contentinfo">
+      <div class="footer-inner">
+        <div class="footer-grid">
+          <!-- Brand -->
+          <div class="footer-brand">
+            <div class="footer-brand-logo">
+              <div class="footer-brand-logo-icon">⚡</div>
+              <div class="footer-brand-logo-text">
+                Web<span>Dev</span>.cours
+              </div>
+            </div>
+            <p>
+              Un cours interactif pour maîtriser les fondamentaux du web — du
+              HTML au pont WebView / React Native. Conçu pour les débutants
+              passionnés.
+            </p>
+            <div
+              style="
+                display: flex;
+                gap: 8px;
+                margin-top: 16px;
+                flex-wrap: wrap;
+              ">
+              <span class="chip cyan" style="font-size: 11px">Statique</span>
+              <span class="chip purple" style="font-size: 11px"
+                >Responsive</span
+              >
+              <span class="chip amber" style="font-size: 11px"
+                >No framework</span
+              >
+            </div>
+          </div>
+
+          <!-- Chapters -->
+          <div class="footer-col">
+            <h4>Chapitres</h4>
+            <ul>
+              <li>
+                <span class="ch-dot"></span
+                ><a href="#ch1">HTML — La structure</a>
+              </li>
+              <li><span class="ch-dot"></span><a href="#ch2">Le DOM</a></li>
+              <li>
+                <span class="ch-dot"></span><a href="#ch3">getElementById</a>
+              </li>
+              <li>
+                <span class="ch-dot"></span><a href="#ch4">Les événements</a>
+              </li>
+              <li>
+                <span class="ch-dot"></span><a href="#ch5">addEventListener</a>
+              </li>
+              <li>
+                <span class="ch-dot"></span
+                ><a href="#ch6">La balise &lt;video&gt;</a>
+              </li>
+              <li>
+                <span class="ch-dot"></span><a href="#ch7">postMessage</a>
+              </li>
+              <li>
+                <span class="ch-dot"></span><a href="#ch8">injectJavaScript</a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Key Concepts -->
+          <div class="footer-col">
+            <h4>Concepts clés</h4>
+            <ul>
+              <li><span class="ch-dot"></span>Document Object Model</li>
+              <li><span class="ch-dot"></span>Event listeners</li>
+              <li><span class="ch-dot"></span>readyState / NaN</li>
+              <li><span class="ch-dot"></span>Sécurité / Injection</li>
+              <li><span class="ch-dot"></span>JSON.stringify</li>
+              <li><span class="ch-dot"></span>Pont WebView natif</li>
+            </ul>
+          </div>
+
+          <!-- Resources -->
+          <div class="footer-col">
+            <h4>Ressources</h4>
+            <ul>
+              <li><span class="ch-dot"></span>MDN Web Docs</li>
+              <li><span class="ch-dot"></span>React Native WebView</li>
+              <li><span class="ch-dot"></span>Firebase Hosting</li>
+              <li><span class="ch-dot"></span>JavaScript.info</li>
+            </ul>
+          </div>
+        </div>
+        <!-- /footer-grid -->
+
+        <!-- Bottom bar -->
+        <div class="footer-bottom">
+          <div class="footer-bottom-left">
+            Cours fait avec ❤️ · <strong>HTML statique</strong> · Aucune
+            dépendance · Deploy-ready
+          </div>
+          <div class="footer-tags">
+            <span class="footer-tag">HTML5</span>
+            <span class="footer-tag">CSS3</span>
+            <span class="footer-tag">Vanilla JS</span>
+            <span class="footer-tag">Firebase ready</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ================================================================
+       SECTION 8 — JAVASCRIPT MODULES
+       8a. Navigation (active state, header chapter update)
+       8b. Reading progress bar
+       8c. Quiz Engine
+       8d. Reveal on scroll animation
+       8e. Copy code button
+       8f. Mobile menu
+       ================================================================ -->
+    <script>
+      /* ──────────────────────────────────────────────────────
+       8a. NAVIGATION
+       Uses IntersectionObserver to detect which chapter
+       is currently visible and updates:
+         - sidebar active state
+         - header chapter pill
+    ────────────────────────────────────────────────────── */
+
+      // Map of chapter IDs to their display names
+      const chapterNames = {
+        ch1: "Ch.1 — HTML",
+        ch2: "Ch.2 — Le DOM",
+        ch3: "Ch.3 — getElementById",
+        ch4: "Ch.4 — Événements",
+        ch5: "Ch.5 — addEventListener",
+        ch6: "Ch.6 — &lt;video&gt;",
+        ch7: "Ch.7 — postMessage",
+        ch8: "Ch.8 — injectJS",
+      };
+
+      const chapters = document.querySelectorAll(".chapter");
+      const navItems = document.querySelectorAll(".nav-item");
+      const headerChapter = document.getElementById("header-chapter");
+
+      /**
+       * setActiveNav — update sidebar highlight and header text
+       * @param {string} id - chapter id (e.g. "ch3")
+       */
+      function setActiveNav(id) {
+        navItems.forEach((item) => {
+          item.classList.toggle("active", item.dataset.chapter === id);
+        });
+        if (headerChapter && chapterNames[id]) {
+          headerChapter.innerHTML = chapterNames[id];
+        }
+      }
+
+      // Observer fires when a chapter enters / leaves viewport
+      const navObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveNav(entry.target.id);
+            }
+          });
+        },
+        {
+          rootMargin: `-${getComputedStyle(document.documentElement)
+            .getPropertyValue("--header-h")
+            .trim()} 0px -60% 0px`,
+          threshold: 0,
+        },
+      );
+
+      chapters.forEach((ch) => navObserver.observe(ch));
+
+      /* ──────────────────────────────────────────────────────
+       8b. READING PROGRESS BAR
+       Calculates how far down the page the user has scrolled
+       and updates the CSS width of the progress bar.
+    ────────────────────────────────────────────────────── */
+      const progressBar = document.getElementById("progress-bar");
+
+      function updateProgress() {
+        const scrollTop = window.scrollY;
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = pct + "%";
+        progressBar.setAttribute("aria-valuenow", Math.round(pct));
+      }
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+
+      /* ──────────────────────────────────────────────────────
+       8c. QUIZ ENGINE
+       Handles: option selection, answer count tracking,
+       submission, scoring, result display, reset, and
+       global score aggregation.
+    ────────────────────────────────────────────────────── */
+
+      // Global score state
+      const quizState = {}; // { quizId: { score, maxScore, completed } }
+      let globalScore = 0;
+      let quizzesCompleted = 0;
+      const TOTAL_QUIZZES = 6; // ch1,2,3,4,7,8
+
+      /**
+       * Initialize all quizzes on page load.
+       * Attaches click handlers to option buttons.
+       */
+      function initQuizzes() {
+        document.querySelectorAll(".quiz-block").forEach((quiz) => {
+          const quizId = quiz.id;
+          const maxScore = parseInt(quiz.dataset.maxScore) || 3;
+          quizState[quizId] = { score: 0, maxScore, completed: false };
+
+          // Track answered count per quiz
+          quiz._answeredCount = 0;
+          const totalQ = quiz.querySelectorAll(".quiz-question").length;
+          const submitBtn = quiz.querySelector(".quiz-submit-btn");
+
+          // Attach click to each option
+          quiz.querySelectorAll(".q-option").forEach((option) => {
+            option.addEventListener("click", function () {
+              const question = this.closest(".quiz-question");
+
+              // Only one selection per question (prevent re-selecting)
+              if (question.querySelector(".q-option.selected")) return;
+
+              // Deselect all in this question, select clicked
+              question
+                .querySelectorAll(".q-option")
+                .forEach((o) => o.classList.remove("selected"));
+              this.classList.add("selected");
+
+              // Update answered count
+              quiz._answeredCount++;
+              updateQuizProgress(quizId, quiz._answeredCount, totalQ);
+
+              // Enable submit when all questions answered
+              if (submitBtn && quiz._answeredCount >= totalQ) {
+                submitBtn.disabled = false;
+              }
+            });
+          });
+        });
+      }
+
+      /**
+       * updateQuizProgress — update the "X / Y réponses" label
+       */
+      function updateQuizProgress(quizId, answered, total) {
+        const el = document.getElementById(`${quizId}-progress`);
+        if (el) el.textContent = `${answered} / ${total} réponses`;
+      }
+
+      /**
+       * submitQuiz — grade a quiz when user clicks "Valider"
+       * Marks correct/wrong options, shows explanations,
+       * calculates score, updates global score.
+       * @param {string} quizId
+       */
+      function submitQuiz(quizId) {
+        const quiz = document.getElementById(quizId);
+        if (!quiz) return;
+
+        let score = 0;
+        const questions = quiz.querySelectorAll(".quiz-question");
+
+        questions.forEach((question) => {
+          const selected = question.querySelector(".q-option.selected");
+          const correct = question.querySelector(
+            '.q-option[data-correct="true"]',
+          );
+          const expl = question.querySelector(".q-explanation");
+
+          // Disable all options (no more clicking)
+          question.querySelectorAll(".q-option").forEach((o) => {
+            o.classList.add("disabled");
+          });
+
+          if (selected) {
+            if (selected.dataset.correct === "true") {
+              // Correct answer
+              selected.classList.add("correct");
+              score++;
+            } else {
+              // Wrong answer — mark selected wrong, show correct
+              selected.classList.add("wrong");
+              if (correct) correct.classList.add("correct");
+            }
+          } else {
+            // No answer — just reveal correct
+            if (correct) correct.classList.add("correct");
+          }
+
+          // Show explanation
+          if (expl) expl.classList.add("show");
+        });
+
+        // Update quiz state
+        quizState[quizId].score = score;
+        quizState[quizId].completed = true;
+        quizzesCompleted++;
+
+        // Update global score tracking
+        globalScore += score;
+        updateGlobalScore();
+
+        // Show result panel
+        const isPassed = score >= Math.ceil(quizState[quizId].maxScore * 0.67);
+        showQuizResult(quizId, score, quizState[quizId].maxScore, isPassed);
+
+        // Update nav badge
+        const chapterId = quiz.dataset.chapter;
+        const badge = document.getElementById(`badge-${chapterId}`);
+        if (badge) {
+          badge.textContent = `${score}/${quizState[quizId].maxScore}`;
+          badge.classList.add("visible", isPassed ? "pass" : "fail");
+        }
+
+        // Hide submit, show reset
+        const submitBtn = document.getElementById(`${quizId}-submit`);
+        const resetBtn = document.getElementById(`${quizId}-reset`);
+        if (submitBtn) submitBtn.style.display = "none";
+        if (resetBtn) resetBtn.style.display = "block";
+      }
+
+      /**
+       * showQuizResult — display score and message
+       */
+      function showQuizResult(quizId, score, maxScore, isPassed) {
+        const resultEl = document.getElementById(`${quizId}-result`);
+        const scoreEl = document.getElementById(`${quizId}-score`);
+        const msgEl = document.getElementById(`${quizId}-msg`);
+
+        if (resultEl) resultEl.classList.add("show");
+        if (scoreEl) {
+          scoreEl.textContent = `${score}/${maxScore}`;
+          scoreEl.className =
+            "quiz-score-display " + (isPassed ? "pass" : "fail");
+        }
+        if (msgEl) {
+          const messages = {
+            pass: ["🎉 Excellent !", "✅ Bien joué !", "⚡ Parfait !"],
+            fail: [
+              "📚 Relis le chapitre",
+              "💪 Continue, tu y es presque !",
+              "🔄 Réessaie !",
+            ],
+          };
+          const pool = isPassed ? messages.pass : messages.fail;
+          msgEl.textContent = pool[Math.floor(Math.random() * pool.length)];
+          msgEl.className = "quiz-result-msg " + (isPassed ? "pass" : "fail");
+        }
+      }
+
+      /**
+       * resetQuiz — reset a quiz to its initial state
+       * @param {string} quizId
+       */
+      function resetQuiz(quizId) {
+        const quiz = document.getElementById(quizId);
+        if (!quiz) return;
+
+        // Deduct score from global
+        globalScore -= quizState[quizId].score;
+        if (quizState[quizId].completed) quizzesCompleted--;
+        quizState[quizId].score = 0;
+        quizState[quizId].completed = false;
+        updateGlobalScore();
+
+        // Reset all options
+        quiz.querySelectorAll(".q-option").forEach((o) => {
+          o.classList.remove("selected", "correct", "wrong", "disabled");
+        });
+        quiz
+          .querySelectorAll(".q-explanation")
+          .forEach((e) => e.classList.remove("show"));
+
+        // Reset result panel
+        const resultEl = document.getElementById(`${quizId}-result`);
+        if (resultEl) resultEl.classList.remove("show");
+
+        // Reset progress counter
+        quiz._answeredCount = 0;
+        const totalQ = quiz.querySelectorAll(".quiz-question").length;
+        updateQuizProgress(quizId, 0, totalQ);
+
+        // Reset buttons
+        const submitBtn = document.getElementById(`${quizId}-submit`);
+        const resetBtn = document.getElementById(`${quizId}-reset`);
+        if (submitBtn) {
+          submitBtn.style.display = "";
+          submitBtn.disabled = true;
+        }
+        if (resetBtn) resetBtn.style.display = "none";
+
+        // Remove nav badge
+        const chapterId = quiz.dataset.chapter;
+        const badge = document.getElementById(`badge-${chapterId}`);
+        if (badge) {
+          badge.textContent = "";
+          badge.classList.remove("visible", "pass", "fail");
+        }
+      }
+
+      /**
+       * updateGlobalScore — sync sidebar score widget and header stat
+       */
+      function updateGlobalScore() {
+        const maxPossible = TOTAL_QUIZZES * 3;
+        const pct = maxPossible > 0 ? (globalScore / maxPossible) * 100 : 0;
+
+        // Sidebar
+        const valEl = document.getElementById("sidebar-score-val");
+        const subEl = document.getElementById("sidebar-score-sub");
+        const barEl = document.getElementById("sidebar-score-bar");
+        if (valEl) valEl.textContent = `${globalScore} pts`;
+        if (subEl)
+          subEl.textContent = `${quizzesCompleted} / ${TOTAL_QUIZZES} quiz complétés`;
+        if (barEl) barEl.style.width = `${pct}%`;
+
+        // Header stat
+        const headerScore = document.getElementById("quiz-total-score");
+        if (headerScore) headerScore.textContent = globalScore;
+      }
+
+      /* ──────────────────────────────────────────────────────
+       8d. REVEAL ON SCROLL
+       Adds 'visible' class to .reveal elements when they
+       enter the viewport, triggering a CSS fade-in.
+    ────────────────────────────────────────────────────── */
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              revealObserver.unobserve(entry.target); // fire once
+            }
+          });
+        },
+        { threshold: 0.08 },
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => revealObserver.observe(el));
+
+      /* ──────────────────────────────────────────────────────
+       8e. COPY CODE BUTTON
+       Copies the nearest <pre> code block to clipboard.
+       Shows "copied!" feedback briefly.
+    ────────────────────────────────────────────────────── */
+
+      /**
+       * copyCode — triggered by onclick on .copy-btn
+       * @param {HTMLButtonElement} btn
+       */
+      function copyCode(btn) {
+        const pre = btn.closest(".code-block").querySelector("pre");
+        if (!pre) return;
+
+        // Get text content (strips HTML tags)
+        const text = pre.innerText || pre.textContent;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            btn.textContent = "✓ copied!";
+            btn.classList.add("copied");
+            setTimeout(() => {
+              btn.textContent = "copy";
+              btn.classList.remove("copied");
+            }, 1800);
+          })
+          .catch(() => {
+            // Fallback for older browsers
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            btn.textContent = "✓";
+            setTimeout(() => (btn.textContent = "copy"), 1500);
+          });
+      }
+
+      /* ──────────────────────────────────────────────────────
+       8f. MOBILE MENU
+       Toggle sidebar drawer on mobile with hamburger button.
+       Closes on overlay click or nav link click.
+    ────────────────────────────────────────────────────── */
+      const menuToggle = document.getElementById("menu-toggle");
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("sidebar-overlay");
+
+      function openMenu() {
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+        menuToggle.classList.add("open");
+        menuToggle.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden"; // prevent background scroll
+      }
+
+      function closeMenu() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+        menuToggle.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+      }
+
+      menuToggle.addEventListener("click", () => {
+        sidebar.classList.contains("open") ? closeMenu() : openMenu();
+      });
+
+      overlay.addEventListener("click", closeMenu);
+
+      // Close sidebar when a nav link is clicked (mobile UX)
+      sidebar.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          if (window.innerWidth <= 768) closeMenu();
+        });
+      });
+
+      /* ──────────────────────────────────────────────────────
+       INIT — Run all module initializations
+    ────────────────────────────────────────────────────── */
+      initQuizzes();
+      updateProgress();
+    </script>
+  
+  </body>
+</html>

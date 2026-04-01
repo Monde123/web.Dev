@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title data-i18n="meta.title">ContentForge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Icons&family=Noto+Sans:wght@400;500;600;700&family=Noto+Serif:wght@500;600;700;800;900&display=swap"
+      rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Fond animé (posts + icônes) — derrière toutes les vues -->
+    <div class="ambient-wrap" aria-hidden="true">
+      <div class="ambient-mesh"></div>
+      <div class="ambient-grid"></div>
+      <div class="ambient-post ambient-post--1">
+        <span class="ambient-post-line"></span>
+        <span class="ambient-post-line ambient-post-line--short"></span>
+        <span class="ambient-post-line ambient-post-line--mid"></span>
+      </div>
+      <div class="ambient-post ambient-post--2">
+        <span class="ambient-post-line"></span>
+        <span class="ambient-post-line ambient-post-line--short"></span>
+      </div>
+      <div class="ambient-post ambient-post--3">
+        <span class="ambient-post-line"></span>
+        <span class="ambient-post-line ambient-post-line--mid"></span>
+        <span class="ambient-post-line ambient-post-line--short"></span>
+      </div>
+      <span class="material-icons ambient-ico ambient-ico--1">auto_awesome</span>
+      <span class="material-icons ambient-ico ambient-ico--2">edit_note</span>
+      <span class="material-icons ambient-ico ambient-ico--3">post_add</span>
+      <span class="material-icons ambient-ico ambient-ico--4">share</span>
+      <span class="material-icons ambient-ico ambient-ico--5">tag</span>
+      <span class="material-icons ambient-ico ambient-ico--6">smart_toy</span>
+    </div>
+
+    <!-- ── LANDING (accueil) ─────────────────────────────── -->
+    <div id="landingScreen" class="landing">
+      <div class="landing-bg" aria-hidden="true"></div>
+      <div class="landing-inner">
+        <header class="landing-top">
+          <div class="landing-brand">
+            <span class="landing-brand-c">Content</span
+            ><span class="landing-brand-v">Forge</span>
+          </div>
+          <div class="landing-top-actions">
+            <div
+              class="lang-switch"
+              role="group"
+              data-i18n-aria="lang.switchAria">
+              <button
+                type="button"
+                class="lang-btn on"
+                data-lang="fr"
+                aria-pressed="true"
+                onclick="setAppLocale('fr')">
+                FR
+              </button>
+              <button
+                type="button"
+                class="lang-btn"
+                data-lang="en"
+                aria-pressed="false"
+                onclick="setAppLocale('en')">
+                EN
+              </button>
+            </div>
+            <button
+              type="button"
+              class="theme-toggle"
+              onclick="toggleTheme()"
+              data-i18n-aria="theme.toDark">
+              <span class="material-icons theme-toggle-ico" aria-hidden="true"
+                >light_mode</span
+              >
+            </button>
+            <button
+              type="button"
+              class="landing-link-btn"
+              onclick="showAuth()"
+              data-i18n="landing.connect">
+              Se connecter
+            </button>
+          </div>
+        </header>
+
+        <main class="landing-main">
+          <section class="landing-hero" aria-labelledby="landing-title">
+            <p class="landing-kicker" data-i18n="landing.kicker">
+              Studio de contenu IA
+            </p>
+            <h1 id="landing-title" class="landing-title" data-i18n="landing.title">
+              De votre référence au post prêt à publier
+            </h1>
+            <p class="landing-lead" data-i18n="landing.lead">
+              Modèles marketing (AIDA, PAS, STAR…), génération multi-modèles,
+              prompts qui s&rsquo;adaptent à votre style — avec vos clés API,
+              vos données.
+            </p>
+            <div class="landing-hero-cta">
+              <button
+                type="button"
+                class="landing-btn landing-btn--primary"
+                onclick="showAuth()"
+                data-i18n="landing.ctaStart">
+                Commencer
+              </button>
+              <button
+                type="button"
+                class="landing-btn landing-btn--ghost"
+                onclick="guestMode()"
+                data-i18n="landing.ctaGuest">
+                Essayer sans compte
+              </button>
+            </div>
+            <p class="landing-note" data-i18n="landing.note">
+              Invité : jusqu&rsquo;à 3 démos · Compte : historique, réglages,
+              clés persistantes
+            </p>
+          </section>
+
+          <section class="landing-features" aria-labelledby="landing-feat-title">
+            <h2
+              id="landing-feat-title"
+              class="landing-section-title"
+              data-i18n="landing.featTitle">
+              Fonctionnalités
+            </h2>
+            <ul class="landing-grid">
+              <li class="landing-card">
+                <span class="landing-card-ico" aria-hidden="true">📐</span>
+                <h3 class="landing-card-title" data-i18n="landing.c1t">
+                  Modèles &amp; templates
+                </h3>
+                <p class="landing-card-text" data-i18n="landing.c1x">
+                  AIDA, PAS, Hook-Story-Offer, FAB, STAR, closing et plus : choisissez
+                  une structure, le contenu s&rsquo;aligne sur votre objectif.
+                </p>
+              </li>
+              <li class="landing-card">
+                <span class="landing-card-ico" aria-hidden="true">🧠</span>
+                <h3 class="landing-card-title" data-i18n="landing.c2t">
+                  Plusieurs modèles IA
+                </h3>
+                <p class="landing-card-text" data-i18n="landing.c2x">
+                  Groq (LLaMA rapide et gratuit), OpenAI, Anthropic — vous branchez
+                  votre propre clé, ContentForge orchestre les appels.
+                </p>
+              </li>
+              <li class="landing-card">
+                <span class="landing-card-ico" aria-hidden="true">✨</span>
+                <h3 class="landing-card-title" data-i18n="landing.c3t">
+                  Prompts adaptatifs
+                </h3>
+                <p class="landing-card-text" data-i18n="landing.c3x">
+                  Notes sur vos posts, version de prompt et ajustements de style
+                  pour affiner la voix au fil du temps.
+                </p>
+              </li>
+              <li class="landing-card">
+                <span class="landing-card-ico" aria-hidden="true">⚡</span>
+                <h3 class="landing-card-title" data-i18n="landing.c4t">
+                  Optimisation des tokens
+                </h3>
+                <p class="landing-card-text" data-i18n="landing.c4x">
+                  Prompts compressés, choix 8b/70b selon le besoin, suivi des
+                  tokens du jour pour rester dans les limites.
+                </p>
+              </li>
+              <li class="landing-card">
+                <span class="landing-card-ico" aria-hidden="true">✏️</span>
+                <h3 class="landing-card-title" data-i18n="landing.c5t">
+                  Édition &amp; export
+                </h3>
+                <p class="landing-card-text" data-i18n="landing.c5x">
+                  Aperçu formaté, édition rapide, copie en un clic — idéal pour
+                  coller sur LinkedIn, Instagram ou newsletter.
+                </p>
+              </li>
+              <li class="landing-card">
+                <span class="landing-card-ico" aria-hidden="true">☁️</span>
+                <h3 class="landing-card-title" data-i18n="landing.c6t">
+                  Compte &amp; synchronisation
+                </h3>
+                <p class="landing-card-text" data-i18n="landing.c6x">
+                  Profil Supabase : clés et préférences liées à votre compte,
+                  historique et réglages retrouvables sur vos appareils.
+                </p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="landing-bottom-cta" aria-label="Accès à l’application">
+            <p class="landing-bottom-text" data-i18n="landing.bottomText">
+              Prêt à forger votre prochain post ?
+            </p>
+            <div class="landing-hero-cta">
+              <button
+                type="button"
+                class="landing-btn landing-btn--primary"
+                onclick="showAuth()"
+                data-i18n="landing.bottomPrimary">
+                Créer un compte ou me connecter
+              </button>
+              <button
+                type="button"
+                class="landing-btn landing-btn--ghost"
+                onclick="guestMode()"
+                data-i18n="landing.bottomGuest">
+                Mode invité
+              </button>
+            </div>
+          </section>
+        </main>
+
+        <footer class="landing-foot" data-i18n="landing.foot">
+          ContentForge · Vos clés, vos contenus
+        </footer>
+      </div>
+    </div>
+
+    <!-- ── AUTH SCREEN ──────────────────────────────────── -->
+    <div id="authScreen">
+      <div class="auth-card">
+        <div class="auth-toolbar">
+          <div
+            class="lang-switch lang-switch--floating"
+            role="group"
+            data-i18n-aria="lang.switchAria">
+            <button
+              type="button"
+              class="lang-btn on"
+              data-lang="fr"
+              aria-pressed="true"
+              onclick="setAppLocale('fr')">
+              FR
+            </button>
+            <button
+              type="button"
+              class="lang-btn"
+              data-lang="en"
+              aria-pressed="false"
+              onclick="setAppLocale('en')">
+              EN
+            </button>
+          </div>
+          <button
+            type="button"
+            class="theme-toggle theme-toggle--floating"
+            onclick="toggleTheme()"
+            data-i18n-aria="theme.toDark">
+          <span class="material-icons theme-toggle-ico" aria-hidden="true"
+            >light_mode</span
+          >
+        </button>
+        </div>
+        <div class="auth-card-glow" aria-hidden="true"></div>
+        <div class="auth-logo">
+          <span class="c">Content</span><span class="v">Forge</span>
+        </div>
+        <div class="auth-sub" data-i18n="auth.subtitle">
+          AI Content Studio · Templates · Adaptive prompts · Your keys, your data
+        </div>
+        <button
+          type="button"
+          class="auth-back"
+          onclick="showLanding()"
+          data-i18n="auth.back">
+          ← Retour à l&rsquo;accueil
+        </button>
+        <div class="auth-tabs" role="tablist">
+          <button
+            type="button"
+            class="auth-tab on"
+            role="tab"
+            aria-selected="true"
+            onclick="switchTab('login')"
+            data-i18n="auth.tabLogin">
+            Sign In
+          </button>
+          <button
+            type="button"
+            class="auth-tab"
+            role="tab"
+            aria-selected="false"
+            onclick="switchTab('signup')"
+            data-i18n="auth.tabSignup">
+            Create Account
+          </button>
+        </div>
+        <div id="authForm" class="auth-form">
+          <div class="auth-field">
+            <label for="authEmail" data-i18n="auth.email">Email</label>
+            <input
+              type="email"
+              id="authEmail"
+              name="email"
+              autocomplete="email"
+              data-i18n-placeholder="auth.phEmail"
+              placeholder="you@example.com" />
+          </div>
+          <div class="auth-field">
+            <label for="authPass" data-i18n="auth.pass">Password</label>
+            <input
+              type="password"
+              id="authPass"
+              name="password"
+              autocomplete="current-password"
+              data-i18n-placeholder="auth.phPass"
+              placeholder="••••••••" />
+          </div>
+          <div id="authConfirmWrap" class="auth-field" hidden>
+            <label for="authPassConfirm" data-i18n="auth.confirm"
+              >Confirm password</label
+            >
+            <input
+              type="password"
+              id="authPassConfirm"
+              name="password-confirm"
+              autocomplete="new-password"
+              data-i18n-placeholder="auth.phPass"
+              placeholder="••••••••" />
+            <p class="auth-hint" id="authPassHint" aria-live="polite"></p>
+          </div>
+          <div class="auth-err" id="authErr"></div>
+          <div class="auth-ok" id="authOk"></div>
+          <button class="auth-btn" id="authSubmit" type="button" onclick="submitAuth()" data-i18n="auth.signin">
+            Sign In
+          </button>
+        </div>
+        <div class="auth-divider">
+          <span data-i18n="auth.divider">or</span>
+        </div>
+        <button type="button" class="guest-btn" onclick="guestMode()">
+          <span class="guest-btn-ico" aria-hidden="true">⚡</span>
+          <span data-i18n="auth.guestBtn">Try as guest</span>
+        </button>
+        <p class="guest-info" data-i18n="auth.guestInfo">
+          Up to 3 demo generations · Nothing saved · Uses the host&rsquo;s demo key when
+          configured
+        </p>
+      </div>
+    </div>
+
+    <!-- ── KEY WIZARD ──────────────────────────────────── -->
+    <div id="keyWizard">
+      <div class="wizard-card">
+        <div class="wiz-toolbar">
+          <div
+            class="lang-switch lang-switch--floating"
+            role="group"
+            data-i18n-aria="lang.switchAria">
+            <button
+              type="button"
+              class="lang-btn on"
+              data-lang="fr"
+              aria-pressed="true"
+              onclick="setAppLocale('fr')">
+              FR
+            </button>
+            <button
+              type="button"
+              class="lang-btn"
+              data-lang="en"
+              aria-pressed="false"
+              onclick="setAppLocale('en')">
+              EN
+            </button>
+          </div>
+          <button
+            type="button"
+            class="theme-toggle theme-toggle--floating"
+            onclick="toggleTheme()"
+            data-i18n-aria="theme.toDark">
+            <span class="material-icons theme-toggle-ico" aria-hidden="true"
+              >light_mode</span
+            >
+          </button>
+        </div>
+        <div class="wiz-steps-bar">
+          <div class="ws done" id="ws1"></div>
+          <div class="ws" id="ws2"></div>
+          <div class="ws" id="ws3"></div>
+        </div>
+
+        <!-- Step 1: Welcome -->
+        <div class="wiz-step on" id="wizStep1">
+          <div class="wiz-title" data-i18n="wiz.welcomeTitle">
+            Welcome to ContentForge! 🎉
+          </div>
+          <div class="wiz-sub" data-i18n="wiz.welcomeSub">
+            To generate content, you'll need a free API key from Groq. It takes
+            2 minutes and gives you 500k free tokens per day.
+          </div>
+          <div class="model-grid">
+            <div
+              class="model-card sel"
+              id="mc-groq"
+              onclick="selectProvider('groq')">
+              <div class="mc-name">Groq</div>
+              <span class="mc-badge free" data-i18n="wiz.badgeFree">Free</span>
+              <div class="mc-desc" data-i18n="wiz.mcGroqDesc">
+                llama-3.3-70b · Fast · 500k tokens/day free
+              </div>
+            </div>
+            <div
+              class="model-card"
+              id="mc-openai"
+              onclick="selectProvider('openai')">
+              <div class="mc-name">OpenAI</div>
+              <span class="mc-badge paid" data-i18n="wiz.badgePaid">Paid</span>
+              <div class="mc-desc" data-i18n="wiz.mcOpenaiDesc">
+                gpt-4o-mini · High quality · Pay per use
+              </div>
+            </div>
+            <div
+              class="model-card"
+              id="mc-anthropic"
+              onclick="selectProvider('anthropic')">
+              <div class="mc-name">Anthropic</div>
+              <span class="mc-badge paid" data-i18n="wiz.badgePaid">Paid</span>
+              <div class="mc-desc" data-i18n="wiz.mcAnthropicDesc">
+                claude-haiku · Fast · Pay per use
+              </div>
+            </div>
+            <div
+              class="model-card"
+              id="mc-skip"
+              onclick="selectProvider('skip')">
+              <div class="mc-name" data-i18n="wiz.mcLater">Later</div>
+              <span class="mc-badge free" data-i18n="wiz.mcSkip">Skip</span>
+              <div class="mc-desc" data-i18n="wiz.mcLaterDesc">
+                Add your key later in Settings
+              </div>
+            </div>
+          </div>
+          <button class="wiz-next" onclick="wizNext(2)" data-i18n="wiz.continue">
+            Continue →
+          </button>
+        </div>
+
+        <!-- Step 2: Key setup -->
+        <div class="wiz-step" id="wizStep2">
+          <div class="wiz-title" id="wizKeyTitle">Set up your Groq key</div>
+          <div class="wiz-sub" id="wizKeySub" data-i18n="wiz.keySubGroq">
+            Groq is completely free. Create an account and get your key in 2
+            minutes.
+          </div>
+          <div class="wiz-key-block" id="wizKeyBlock">
+            <div class="wiz-key-label" data-i18n="wiz.keyLabel1">
+              Step 1 — Get your free API key
+            </div>
+            <div class="wiz-key-desc" id="wizKeyDesc">
+              Click the link below, create a free account, go to "API Keys" and
+              click "Create API Key".
+            </div>
+            <a
+              class="groq-link"
+              id="wizKeyLink"
+              href="https://console.groq.com/keys"
+              target="_blank"
+              >🔗 Open console.groq.com/keys →</a
+            >
+            <div
+              class="wiz-key-label"
+              style="margin-top: 10px"
+              data-i18n="wiz.keyLabel2">
+              Step 2 — Paste your key here
+            </div>
+            <input
+              type="password"
+              class="wiz-input"
+              id="wizApiKey"
+              placeholder="gsk_..."
+              oninput="wizCheckKey()" />
+            <div
+              style="font-size: 0.68rem; color: var(--m); margin-top: 5px"
+              id="wizKeyHint"
+              data-i18n="wiz.keyHint">
+              Your key is encrypted and stored in your private account.
+            </div>
+          </div>
+          <div class="wiz-nav">
+            <button class="wiz-skip" onclick="wizNext(3)" data-i18n="wiz.skipNow">
+              Skip for now
+            </button>
+            <button
+              class="wiz-next"
+              id="wizNextBtn2"
+              onclick="wizSaveKey()"
+              disabled
+              data-i18n="wiz.saveContinue">
+              Save & Continue →
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Done -->
+        <div class="wiz-step" id="wizStep3">
+          <div class="wiz-title" data-i18n="wiz.doneTitle">You're all set! 🚀</div>
+          <div class="wiz-sub" id="wizDoneSub" data-i18n="wiz.doneSub">
+            Your key is saved. ContentForge will use it for all your generations
+            — it's private and only you can see it.
+          </div>
+          <div
+            class="wiz-done-box"
+            style="
+              background: var(--s2);
+              border-radius: 9px;
+              padding: 16px;
+              margin-bottom: 18px;
+              font-size: 0.8rem;
+              color: var(--m);
+              line-height: 1.8;
+            ">
+            <strong style="color: var(--t)" data-i18n="wiz.doneStrong"
+              >Token optimization enabled:</strong
+            ><br />
+            <span data-i18n="wiz.doneL1"
+              >· Optimizer → llama-3.1-8b-instant (fast, free)</span
+            ><br />
+            <span data-i18n="wiz.doneL2"
+              >· Generator → llama-3.3-70b-versatile (quality)</span
+            ><br />
+            <span data-i18n="wiz.doneL3"
+              >· ~550 tokens/generation (vs 1500 standard)</span
+            ><br />
+            <span data-i18n="wiz.doneL4"
+              >· Rate your posts to evolve the prompt automatically</span
+            >
+          </div>
+          <button class="wiz-next" onclick="launchApp()" data-i18n="wiz.openApp">
+            Open ContentForge →
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TEMPLATE MODAL ───────────────────────────────── -->
+    <div class="overlay" id="tplO">
+      <div class="modal">
+        <div class="mh">
+          <h2 data-i18n="tplModal.title">📐 Content Template</h2>
+          <span class="mc" onclick="closeTpl()">✕</span>
+        </div>
+        <div class="tpl-grid" id="tplGrid"></div>
+      </div>
+    </div>
+
+    <!-- ── MAIN APP ─────────────────────────────────────── -->
+    <div id="app">
+      <header>
+        <div class="logo"><span class="c">Content</span>Forge</div>
+        <div class="hright">
+          <div
+            class="lang-switch lang-switch--header"
+            role="group"
+            data-i18n-aria="lang.switchAria">
+            <button
+              type="button"
+              class="lang-btn on"
+              data-lang="fr"
+              aria-pressed="true"
+              onclick="setAppLocale('fr')">
+              FR
+            </button>
+            <button
+              type="button"
+              class="lang-btn"
+              data-lang="en"
+              aria-pressed="false"
+              onclick="setAppLocale('en')">
+              EN
+            </button>
+          </div>
+          <button
+            type="button"
+            class="theme-toggle theme-toggle--header"
+            onclick="toggleTheme()"
+            data-i18n-aria="theme.toDark">
+            <span class="material-icons theme-toggle-ico" aria-hidden="true"
+              >light_mode</span
+            >
+          </button>
+          <div class="header-pills">
+            <div class="pill" id="modePill">Guest</div>
+            <div class="pill">🧠 <span id="memC">0</span></div>
+            <div class="pill">v<span id="hVer">1</span></div>
+          </div>
+        </div>
+      </header>
+      <div id="guestBanner" class="guest-banner" style="display: none">
+        <div
+          id="guestKeyWarn"
+          class="guest-key-warn"
+          hidden
+          role="status"
+          data-i18n="guest.warnHtml"
+          data-i18n-html="1"></div>
+        <div class="gb-row">
+          <div class="gb-left">
+            <div class="gb-dots">
+              <div class="gb-dot" id="gd1"></div>
+              <div class="gb-dot" id="gd2"></div>
+              <div class="gb-dot" id="gd3"></div>
+            </div>
+            <span id="guestMsg"
+              >3 free generations · Powered by LLaMA 3.3 70b · No account
+              needed</span
+            >
+          </div>
+          <button
+            type="button"
+            class="signup-cta"
+            onclick="showAuth()"
+            data-i18n="app.guestCta">
+            Create account → your own key
+          </button>
+        </div>
+      </div>
+      <div class="tok-bar" id="tokBar" style="display: none">
+        <span class="tk-lbl" data-i18n="app.tokensToday">Tokens today</span>
+        <div class="tk-tr">
+          <div class="tk-fi" id="tkFi" style="width: 0%"></div>
+        </div>
+        <span class="tk-ct" id="tkCt">0 / 500k</span>
+        <div class="evo-right">
+          <span style="font-size: 0.65rem; color: var(--m)" data-i18n="app.evolution"
+            >Evolution</span
+          >
+          <div class="evo-tr">
+            <div class="evo-fi" id="evoFi" style="width: 0%"></div>
+          </div>
+          <span class="evo-ver">v<span id="eVer">1</span></span>
+          <button class="rst-btn" onclick="resetStyle()">↺</button>
+        </div>
+      </div>
+
+      <div class="body">
+        <!-- LEFT -->
+        <aside>
+          <div class="pnl">
+            <div class="ph">
+              <div class="phd" style="background: var(--a)"></div>
+              <h3 data-i18n="app.setup">Setup</h3>
+            </div>
+            <div class="pb">
+              <div class="notif" id="notif"></div>
+              <div class="fld">
+                <label data-i18n="app.model">Model</label>
+                <div class="model-row" id="modelRow"></div>
+              </div>
+              <div class="fld">
+                <label data-i18n="app.domain">Domain</label>
+                <select id="domain">
+                  <option>Marketing</option>
+                  <option>Tech</option>
+                  <option>Lifestyle</option>
+                  <option>Business</option>
+                  <option>Education</option>
+                  <option>Health & Wellness</option>
+                  <option>Finance</option>
+                  <option>Food & Cooking</option>
+                  <option>Travel</option>
+                  <option>Entertainment</option>
+                </select>
+              </div>
+              <div class="fld">
+                <label data-i18n="app.platform">Platform</label>
+                <select id="platform">
+                  <option>Instagram</option>
+                  <option>LinkedIn</option>
+                  <option>Facebook</option>
+                  <option>Twitter / X</option>
+                  <option>TikTok</option>
+                  <option>Newsletter</option>
+                </select>
+              </div>
+              <div class="fld">
+                <label data-i18n="app.goal">Goal</label>
+                <select id="goal">
+                  <option>Engagement</option>
+                  <option>Awareness</option>
+                  <option>Promotion</option>
+                  <option>Inspiration</option>
+                  <option>Education</option>
+                  <option>Lead Generation</option>
+                </select>
+              </div>
+              <div class="fld">
+                <label data-i18n="app.format">Format</label>
+                <select id="format">
+                  <option>Short post</option>
+                  <option>Long post</option>
+                  <option>Both versions</option>
+                  <option>3 Variants</option>
+                </select>
+              </div>
+              <div class="fld">
+                <label data-i18n="app.template">Template</label>
+                <div class="tpl-b" onclick="openTpl()">
+                  <span class="tpl-bn" id="tplN">AIDA</span
+                  ><span style="font-size: 0.65rem; color: var(--m)">✎</span>
+                </div>
+              </div>
+              <div class="fld">
+                <label data-i18n="app.reference">Reference (max 400 chars)</label>
+                <textarea
+                  id="ref"
+                  data-i18n-placeholder="app.refPh"
+                  placeholder="Paste your draft, idea…"
+                  oninput="uc()"
+                  maxlength="400"></textarea>
+                <div class="char-c" id="ch">0 / 400</div>
+              </div>
+              <button class="gen-btn" id="genBtn" onclick="gen()">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+                <span data-i18n="app.generate">Generate</span>
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- CENTER -->
+        <div class="center">
+          <div class="ec" id="ec">
+            <div class="ei">🪄</div>
+            <h3 data-i18n="app.centerTitle">ContentForge</h3>
+            <p data-i18n="app.centerSub">
+              Configurez, collez un contenu, et générez. Notez chaque post pour
+              que le prompt évolue.
+            </p>
+          </div>
+          <div class="lc" id="lc">
+            <div class="ldr"></div>
+            <div class="ls" id="lsteps"></div>
+          </div>
+          <div class="oc" id="oc">
+            <div class="ot">
+              <div class="bdgs">
+                <span class="bdg bp" id="bP">—</span>
+                <span class="bdg bt" id="bT">—</span>
+                <span class="bdg bv" id="bV">v1</span>
+                <span class="bdg bm" id="bM">—</span>
+              </div>
+              <div class="oacts">
+                <button
+                  class="ib"
+                  onclick="toggleEdit()"
+                  id="editBtn"
+                  data-i18n-title="app.titleEdit"
+                  title="Edit">
+                  ✏️
+                </button>
+                <button
+                  class="ib"
+                  onclick="gen()"
+                  data-i18n-title="app.titleRegen"
+                  title="Regenerate">
+                  🔄
+                </button>
+                <button class="ib" onclick="clearOut()">🗑️</button>
+              </div>
+            </div>
+            <div class="co" id="cout"></div>
+            <div class="rate-row">
+              <div class="rt-top">
+                <span class="rt-lbl" data-i18n="app.rateThis">Rate this post</span>
+                <div class="stars" id="stars">
+                  <span class="star" onclick="setStar(1)">⭐</span>
+                  <span class="star" onclick="setStar(2)">⭐</span>
+                  <span class="star" onclick="setStar(3)">⭐</span>
+                  <span class="star" onclick="setStar(4)">⭐</span>
+                  <span class="star" onclick="setStar(5)">⭐</span>
+                </div>
+              </div>
+              <textarea
+                class="rc"
+                id="rc"
+                data-i18n-placeholder="app.rcPh"
+                placeholder="Optional…"></textarea>
+              <div class="ra">
+                <div class="opts" id="opts">
+                  <div class="sp"></div>
+                  <span data-i18n="app.optimizing">Optimizing…</span>
+                </div>
+                <button class="cp-btn" onclick="copyPost()" data-i18n="app.copy">
+                  📋 Copy
+                </button>
+                <button class="sb-btn" onclick="submitRating()" data-i18n="app.submitOpt">
+                  Submit & Optimize →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT -->
+        <aside class="right-col">
+          <div class="pnl" style="margin-bottom: 12px">
+            <div class="ph">
+              <div class="phd" style="background: var(--a3)"></div>
+              <h3 data-i18n="app.promptLayer">Prompt layer</h3>
+            </div>
+            <div class="pb">
+              <div class="pp" id="pp" data-i18n="app.noAdj">No adjustments yet.</div>
+            </div>
+          </div>
+          <div class="pnl" style="margin-bottom: 12px">
+            <div class="ph">
+              <div class="phd" style="background: var(--g)"></div>
+              <h3 data-i18n="app.history">History</h3>
+            </div>
+            <div class="pb" id="histB">
+              <p
+                style="font-size: 0.73rem; color: var(--m)"
+                data-i18n="app.histEmpty">
+                No history yet.
+              </p>
+            </div>
+          </div>
+          <div class="pnl">
+            <div class="ph">
+              <div class="phd" style="background: var(--am)"></div>
+              <h3 data-i18n="app.settings">Settings</h3>
+            </div>
+            <div class="pb">
+              <button
+                class="settings-btn"
+                onclick="toggleSettings()"
+                data-i18n="app.apiBtn">
+                ⚙️ API Keys & Model
+              </button>
+              <div class="sdrawer" id="sdrawer">
+                <div class="sp-body">
+                  <div class="sp-fld">
+                    <label
+                      ><span class="sp-kdot" id="skd1"></span
+                      ><span data-i18n="app.genKey">Generator key</span></label
+                    >
+                    <input
+                      type="password"
+                      class="sp-input"
+                      id="sk1"
+                      data-i18n-placeholder="app.skPh"
+                      placeholder="API key…"
+                      oninput="skCheck()" />
+                  </div>
+                  <div class="sp-fld">
+                    <label
+                      ><span class="sp-kdot" id="skd2"></span
+                      ><span data-i18n="app.optKey"
+                        >Optimizer key (optional)</span
+                      ></label
+                    >
+                    <input
+                      type="password"
+                      class="sp-input"
+                      id="sk2"
+                      data-i18n-placeholder="app.skPh2"
+                      placeholder="Same or different key…"
+                      oninput="skCheck()" />
+                  </div>
+                  <div class="sp-fld">
+                    <label data-i18n="app.provider">Provider</label>
+                    <select
+                      class="sp-input"
+                      id="sprovider"
+                      onchange="updateModelChips()">
+                      <option value="groq">Groq (free)</option>
+                      <option value="openai">OpenAI</option>
+                      <option value="anthropic">Anthropic</option>
+                    </select>
+                  </div>
+                  <button class="save-btn" onclick="saveSettings()" data-i18n="app.saveKeys">
+                    ✓ Save keys
+                  </button>
+                  <button class="signout-btn" onclick="signOut()" data-i18n="app.signOut">
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+      <footer>
+        <span data-i18n="app.footer"
+          >ContentForge · Each user brings their own key · Data synced via
+          Supabase · </span
+        ><span class="footer-accent" data-i18n="app.footerAccent"
+          >Adaptive AI</span
+        >
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
