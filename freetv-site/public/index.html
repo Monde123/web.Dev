@@ -1,0 +1,2599 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Free-TV IPTV — Regardez la TV gratuite du monde entier. Liens M3U8 par pays, guide VLC et tutoriels." />
+    <title>Free-TV IPTV · La télévision mondiale gratuite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --bg2: #ffffff;
+        --bg3: #f1f5f9;
+        --surface: #ffffff;
+        --surface2: #f8fafc;
+        --border: #e2e8f0;
+        --accent: #0284c7;
+        --accent2: #0369a1;
+        --green: #22c55e;
+        --orange: #f59e0b;
+        --red: #ef4444;
+        --text: #334155;
+        --muted: #64748b;
+        --white: #0f172a;
+        --shadow: rgba(0, 0, 0, 0.03);
+        --shadow-hover: rgba(0, 0, 0, 0.08);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0b0e14;
+          --bg2: #11141b;
+          --bg3: #161a23;
+          --surface: #11141b;
+          --surface2: #161a23;
+          --border: #1e2430;
+          --accent: #0ea5e9;
+          --accent2: #38bdf8;
+          --green: #4ade80;
+          --orange: #fbbf24;
+          --red: #f87171;
+          --text: #94a3b8;
+          --muted: #64748b;
+          --white: #f1f5f9;
+          --shadow: rgba(0, 0, 0, 0.2);
+          --shadow-hover: rgba(0, 0, 0, 0.4);
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Sora", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        overflow-x: hidden;
+      }
+
+      /* ── SCANLINES TEXTURE ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(2, 132, 199, 0.005) 2px,
+          rgba(2, 132, 199, 0.005) 4px
+        );
+        pointer-events: none;
+        z-index: 999;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: rgba(var(--nav-bg, 255, 255, 255), 0.8);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 4px 20px var(--shadow);
+        padding: 0 40px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        nav {
+          --nav-bg: 11, 14, 20;
+        }
+      }
+
+      .nav-logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 22px;
+        letter-spacing: 3px;
+        color: var(--white);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .nav-logo .dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--accent);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.8);
+        }
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 32px;
+        list-style: none;
+      }
+
+      .nav-links a {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      /* ── HERO ── */
+      #hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        padding: 80px 40px 60px;
+      }
+
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 50% at 50% -10%,
+            rgba(2, 132, 199, 0.05) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 40% 40% at 80% 80%,
+            rgba(2, 132, 199, 0.03) 0%,
+            transparent 50%
+          );
+      }
+
+      .hero-grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        background-size: 50px 50px;
+        opacity: 0.15;
+        mask-image: radial-gradient(
+          ellipse 80% 80% at center,
+          black 30%,
+          transparent 100%
+        );
+      }
+
+      .hero-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(2, 132, 199, 0.06);
+        border: 1px solid rgba(2, 132, 199, 0.15);
+        color: var(--accent);
+        padding: 6px 18px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 28px;
+        position: relative;
+      }
+
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--red);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--red);
+        animation: pulse 1.5s infinite;
+      }
+
+      .hero-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(60px, 12vw, 130px);
+        line-height: 0.9;
+        letter-spacing: 4px;
+        color: var(--white);
+        position: relative;
+        margin-bottom: 8px;
+      }
+
+      .hero-title .accent-word {
+        color: var(--accent);
+        text-shadow: 0 0 40px rgba(2, 132, 199, 0.1);
+        display: block;
+      }
+
+      .hero-sub {
+        font-size: 16px;
+        color: var(--muted);
+        max-width: 520px;
+        margin: 20px auto 40px;
+        line-height: 1.8;
+        position: relative;
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 48px;
+        justify-content: center;
+        position: relative;
+        margin-bottom: 48px;
+        flex-wrap: wrap;
+      }
+
+      .stat {
+        text-align: center;
+      }
+      .stat-n {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 48px;
+        letter-spacing: 2px;
+        color: var(--white);
+        display: block;
+        line-height: 1;
+      }
+      .stat-l {
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-top: 4px;
+        display: block;
+      }
+
+      .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--accent);
+        color: #ffffff;
+        padding: 14px 36px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: all 0.2s;
+        position: relative;
+        box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2);
+      }
+      .hero-btn:hover {
+        background: var(--accent2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(2, 132, 199, 0.3);
+      }
+
+      /* ── SECTION ── */
+      .section {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 80px 40px;
+      }
+
+      .section + .section {
+        border-top: 1px solid var(--border);
+      }
+
+      .s-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 10px;
+      }
+
+      .s-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(36px, 5vw, 58px);
+        letter-spacing: 2px;
+        color: var(--white);
+        margin-bottom: 16px;
+        line-height: 1;
+      }
+
+      .s-intro {
+        font-size: 16px;
+        color: var(--muted);
+        max-width: 640px;
+        margin-bottom: 48px;
+        line-height: 1.8;
+      }
+
+      /* ── MAIN PLAYLIST CARD ── */
+      .main-playlist {
+        background: linear-gradient(
+          135deg,
+          rgba(2, 132, 199, 0.05),
+          rgba(2, 132, 199, 0.02)
+        );
+        border: 1px solid rgba(2, 132, 199, 0.2);
+        border-radius: 12px;
+        padding: 32px;
+        margin-bottom: 48px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .main-playlist::before {
+        content: "🌍 PLAYLIST MONDIALE COMPLÈTE";
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: var(--accent);
+        opacity: 0.6;
+      }
+
+      .main-playlist h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--white);
+        margin-bottom: 12px;
+      }
+
+      .url-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 14px 16px;
+      }
+
+      .url-text {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 13px;
+        color: var(--accent2);
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .copy-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        font-family: "Sora", sans-serif;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .copy-btn:hover {
+        background: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent);
+      }
+      .copy-btn.copied {
+        background: var(--green);
+        color: #ffffff;
+        border-color: var(--green);
+      }
+
+      /* ── REGION TABS ── */
+      .region-tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+
+      .rtab {
+        padding: 8px 20px;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: var(--bg2);
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        letter-spacing: 0.05em;
+      }
+      .rtab:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .rtab.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #ffffff;
+      }
+
+      /* ── COUNTRY GRID ── */
+      .region-panel {
+        display: none;
+      }
+      .region-panel.active {
+        display: block;
+      }
+
+      .country-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+      }
+
+      .country-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: all 0.15s;
+        box-shadow: 0 2px 8px var(--shadow);
+      }
+      .country-card:hover {
+        border-color: rgba(2, 132, 199, 0.3);
+        background: var(--surface2);
+        transform: translateX(3px);
+        box-shadow: 0 4px 12px var(--shadow-hover);
+      }
+
+      .flag {
+        font-size: 26px;
+        flex-shrink: 0;
+        line-height: 1;
+      }
+
+      .country-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .country-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--white);
+        display: block;
+        margin-bottom: 4px;
+      }
+      .country-url {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 10px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+      }
+
+      .copy-small {
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        font-family: "Sora", sans-serif;
+        cursor: pointer;
+        transition: all 0.15s;
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+      .copy-small:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: #ffffff;
+      }
+      .copy-small.copied {
+        border-color: var(--green);
+        color: var(--green);
+        background: #ffffff;
+      }
+
+      /* ── VLC GUIDE ── */
+      .steps-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 8px;
+      }
+
+      .step-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 4px 12px var(--shadow);
+      }
+      .step-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px var(--shadow-hover);
+      }
+
+      /* Image placeholder */
+      .step-img-slot {
+        width: 100%;
+        height: 240px;
+        background: var(--bg3);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 2px 10px var(--shadow);
+        padding: 12px;
+      }
+
+      .step-img-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        transition: transform 0.3s ease;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+        background: #ffffff;
+      }
+      .step-card:hover .step-img-slot img {
+        transform: scale(1.02);
+      }
+
+      /* Shown when no img */
+      .img-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: var(--muted);
+        width: 100%;
+        height: 100%;
+      }
+
+      .img-placeholder .ph-icon {
+        font-size: 36px;
+        opacity: 0.4;
+      }
+      .img-placeholder .ph-text {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        opacity: 0.4;
+        text-align: center;
+        padding: 0 16px;
+      }
+
+      .step-img-slot.has-image .img-placeholder {
+        display: none;
+      }
+
+      .step-body {
+        padding: 20px;
+      }
+
+      .step-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: var(--accent);
+        color: #ffffff;
+        border-radius: 50%;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        flex-shrink: 0;
+      }
+
+      .step-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--white);
+        margin-bottom: 8px;
+      }
+
+      .step-desc {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .step-tip {
+        margin-top: 12px;
+        background: rgba(var(--accent-rgb, 2, 132, 199), 0.05);
+        border-left: 2px solid var(--accent);
+        padding: 10px 14px;
+        border-radius: 0 6px 6px 0;
+        font-size: 12px;
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      /* ── PLAYERS ── */
+      .players-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+        margin-top: 8px;
+      }
+
+      .player-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 24px 20px;
+        text-align: center;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: block;
+        box-shadow: 0 4px 12px var(--shadow);
+      }
+      .player-card:hover {
+        border-color: rgba(2, 132, 199, 0.4);
+        transform: translateY(-4px);
+        background: var(--surface2);
+        box-shadow: 0 10px 25px var(--shadow-hover);
+      }
+
+      .player-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+        display: block;
+      }
+      .player-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--white);
+        display: block;
+        margin-bottom: 4px;
+      }
+      .player-platform {
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+        display: block;
+        margin-bottom: 12px;
+      }
+      .player-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 100px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .badge-free {
+        background: rgba(34, 197, 94, 0.1);
+        color: var(--green);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+      }
+      .badge-recommended {
+        background: rgba(2, 132, 199, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(2, 132, 199, 0.2);
+      }
+
+      /* ── CALLOUT ── */
+      .callout {
+        border-radius: 8px;
+        padding: 20px 24px;
+        margin: 32px 0;
+        font-size: 14px;
+        line-height: 1.7;
+        border-left: 3px solid;
+      }
+      .callout.info {
+        background: rgba(2, 132, 199, 0.05);
+        border-color: var(--accent);
+        color: #475569;
+      }
+      .callout.success {
+        background: rgba(34, 197, 94, 0.05);
+        border-color: var(--green);
+        color: #166534;
+      }
+      .callout.warn {
+        background: rgba(245, 158, 11, 0.05);
+        border-color: var(--orange);
+        color: #92400e;
+      }
+      .callout strong {
+        color: var(--white);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        padding: 48px 40px;
+        text-align: center;
+      }
+
+      .footer-logo {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 28px;
+        letter-spacing: 4px;
+        color: var(--white);
+        margin-bottom: 12px;
+      }
+
+      footer p {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.8;
+        max-width: 540px;
+        margin: 0 auto 20px;
+      }
+
+      .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        flex-wrap: wrap;
+      }
+      .footer-links a {
+        font-size: 13px;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color 0.15s;
+      }
+      .footer-links a:hover {
+        color: var(--accent);
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 700px) {
+        nav {
+          padding: 0 16px;
+        }
+        .nav-links {
+          display: none;
+        }
+        .section {
+          padding: 60px 20px;
+        }
+        .steps-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-stats {
+          gap: 24px;
+        }
+        .url-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .url-text {
+          white-space: normal;
+          word-break: break-all;
+        }
+      }
+
+      /* ── REVEAL ANIMATION ── */
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a href="#hero" class="nav-logo">
+        <div class="dot"></div>
+        FREE·TV·IPTV
+      </a>
+      <ul class="nav-links">
+        <li><a href="#playlist">Liens M3U8</a></li>
+        <li><a href="#vlc">Guide VLC</a></li>
+        <li><a href="#players">Lecteurs</a></li>
+        <li>
+          <a href="https://github.com/Free-TV/IPTV" target="_blank">GitHub ↗</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+
+      <div class="hero-chip">
+        <span class="live-dot"></span>
+        Open Source · 100% Gratuit · Mise à jour automatique
+      </div>
+
+      <h1 class="hero-title">
+        TV MONDIALE
+        <span class="accent-word">GRATUITE</span>
+      </h1>
+
+      <p class="hero-sub">
+        Des centaines de chaînes TV officiellement gratuites du monde entier,
+        organisées par pays. Une seule URL M3U8 suffit pour tout regarder.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-n" style="color: var(--accent)">60+</span>
+          <span class="stat-l">Pays</span>
+        </div>
+        <div class="stat">
+          <span class="stat-n" style="color: var(--green)">100%</span>
+          <span class="stat-l">Gratuit</span>
+        </div>
+        <div class="stat">
+          <span class="stat-n" style="color: var(--orange)">14k+</span>
+          <span class="stat-l">Stars GitHub</span>
+        </div>
+        <div class="stat">
+          <span class="stat-n" style="color: var(--white)">HD</span>
+          <span class="stat-l">Qualité</span>
+        </div>
+      </div>
+
+      <a href="#playlist" class="hero-btn"> 📺 Accéder aux liens </a>
+    </section>
+
+    <!-- SECTION PLAYLIST -->
+    <section id="playlist" class="section">
+      <div class="s-label">📡 Liens M3U8</div>
+      <h2 class="s-title">Choisissez votre pays</h2>
+      <p class="s-intro">
+        Copiez l'URL M3U8 correspondante et collez-la dans votre lecteur IPTV
+        préféré. La playlist mondiale inclut toutes les chaînes disponibles.
+      </p>
+
+      <!-- MAIN PLAYLIST -->
+      <div class="main-playlist reveal">
+        <h3>🌍 Playlist mondiale — Tous les pays combinés</h3>
+        <div class="url-row">
+          <span class="url-text"
+            >https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8</span
+          >
+          <button
+            class="copy-btn"
+            onclick="
+              copyUrl(
+                this,
+                'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8',
+              )
+            ">
+            📋 Copier
+          </button>
+        </div>
+      </div>
+
+      <div class="callout info reveal">
+        <strong>💡 Comment utiliser ces liens ?</strong> Copiez l'URL M3U8,
+        ouvrez VLC → Média → Ouvrir un flux réseau → collez l'URL → Lire. Voir
+        le guide complet ci-dessous.
+      </div>
+
+      <!-- REGION TABS -->
+      <div class="region-tabs reveal">
+        <button class="rtab active" onclick="showRegion('europe')">
+          🇪🇺 Europe
+        </button>
+        <button class="rtab" onclick="showRegion('amerique')">
+          🌎 Amériques
+        </button>
+        <button class="rtab" onclick="showRegion('asie')">🌏 Asie</button>
+        <button class="rtab" onclick="showRegion('moyenorient')">
+          🌍 Moyen-Orient
+        </button>
+        <button class="rtab" onclick="showRegion('afrique')">🌍 Afrique</button>
+      </div>
+
+      <!-- EUROPE -->
+      <div id="region-europe" class="region-panel active">
+        <div class="country-grid">
+          <!-- Pays en ordre alphabétique -->
+          <div class="country-card">
+            <span class="flag">🇦🇱</span>
+            <div class="country-info">
+              <span class="country-name">Albanie</span>
+              <span class="country-url">…/lists/albania.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/albania.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇦🇩</span>
+            <div class="country-info">
+              <span class="country-name">Andorre</span>
+              <span class="country-url">…/lists/andorra.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/andorra.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇦🇹</span>
+            <div class="country-info">
+              <span class="country-name">Autriche</span>
+              <span class="country-url">…/lists/austria.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/austria.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇧🇾</span>
+            <div class="country-info">
+              <span class="country-name">Biélorussie</span>
+              <span class="country-url">…/lists/belarus.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/belarus.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇧🇪</span>
+            <div class="country-info">
+              <span class="country-name">Belgique</span>
+              <span class="country-url">…/lists/belgium.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/belgium.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇧🇦</span>
+            <div class="country-info">
+              <span class="country-name">Bosnie-Herzégovine</span>
+              <span class="country-url">…/lists/bosnia_and_herzegovina.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/bosnia_and_herzegovina.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇧🇬</span>
+            <div class="country-info">
+              <span class="country-name">Bulgarie</span>
+              <span class="country-url">…/lists/bulgaria.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/bulgaria.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇭🇷</span>
+            <div class="country-info">
+              <span class="country-name">Croatie</span>
+              <span class="country-url">…/lists/croatia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/croatia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇨🇾</span>
+            <div class="country-info">
+              <span class="country-name">Chypre</span>
+              <span class="country-url">…/lists/cyprus.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/cyprus.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇨🇿</span>
+            <div class="country-info">
+              <span class="country-name">République Tchèque</span>
+              <span class="country-url">…/lists/czech_republic.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/czech_republic.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇩🇰</span>
+            <div class="country-info">
+              <span class="country-name">Danemark</span>
+              <span class="country-url">…/lists/denmark.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/denmark.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇪🇪</span>
+            <div class="country-info">
+              <span class="country-name">Estonie</span>
+              <span class="country-url">…/lists/estonia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/estonia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇫🇮</span>
+            <div class="country-info">
+              <span class="country-name">Finlande</span>
+              <span class="country-url">…/lists/finland.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/finland.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇫🇷</span>
+            <div class="country-info">
+              <span class="country-name">France</span>
+              <span class="country-url">…/lists/france.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/france.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇩🇪</span>
+            <div class="country-info">
+              <span class="country-name">Allemagne</span>
+              <span class="country-url">…/lists/germany.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/germany.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇬🇷</span>
+            <div class="country-info">
+              <span class="country-name">Grèce</span>
+              <span class="country-url">…/lists/greece.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/greece.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇭🇺</span>
+            <div class="country-info">
+              <span class="country-name">Hongrie</span>
+              <span class="country-url">…/lists/hungary.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/hungary.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇮🇸</span>
+            <div class="country-info">
+              <span class="country-name">Islande</span>
+              <span class="country-url">…/lists/iceland.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/iceland.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇮🇪</span>
+            <div class="country-info">
+              <span class="country-name">Irlande</span>
+              <span class="country-url">…/lists/ireland.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/ireland.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇮🇹</span>
+            <div class="country-info">
+              <span class="country-name">Italie</span>
+              <span class="country-url">…/lists/italy.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/italy.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇽🇰</span>
+            <div class="country-info">
+              <span class="country-name">Kosovo</span>
+              <span class="country-url">…/lists/kosovo.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/kosovo.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇱🇻</span>
+            <div class="country-info">
+              <span class="country-name">Lettonie</span>
+              <span class="country-url">…/lists/latvia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/latvia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇱🇹</span>
+            <div class="country-info">
+              <span class="country-name">Lituanie</span>
+              <span class="country-url">…/lists/lithuania.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/lithuania.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇱🇺</span>
+            <div class="country-info">
+              <span class="country-name">Luxembourg</span>
+              <span class="country-url">…/lists/luxembourg.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/luxembourg.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇲🇹</span>
+            <div class="country-info">
+              <span class="country-name">Malte</span>
+              <span class="country-url">…/lists/malta.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/malta.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇲🇩</span>
+            <div class="country-info">
+              <span class="country-name">Moldavie</span>
+              <span class="country-url">…/lists/moldova.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/moldova.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇲🇨</span>
+            <div class="country-info">
+              <span class="country-name">Monaco</span>
+              <span class="country-url">…/lists/monaco.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/monaco.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇲🇪</span>
+            <div class="country-info">
+              <span class="country-name">Monténégro</span>
+              <span class="country-url">…/lists/montenegro.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/montenegro.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇳🇱</span>
+            <div class="country-info">
+              <span class="country-name">Pays-Bas</span>
+              <span class="country-url">…/lists/netherlands.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/netherlands.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇲🇰</span>
+            <div class="country-info">
+              <span class="country-name">Macédoine du Nord</span>
+              <span class="country-url">…/lists/north_macedonia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/north_macedonia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇳🇴</span>
+            <div class="country-info">
+              <span class="country-name">Norvège</span>
+              <span class="country-url">…/lists/norway.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/norway.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇵🇱</span>
+            <div class="country-info">
+              <span class="country-name">Pologne</span>
+              <span class="country-url">…/lists/poland.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/poland.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇵🇹</span>
+            <div class="country-info">
+              <span class="country-name">Portugal</span>
+              <span class="country-url">…/lists/portugal.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/portugal.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇷🇴</span>
+            <div class="country-info">
+              <span class="country-name">Roumanie</span>
+              <span class="country-url">…/lists/romania.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/romania.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇷🇺</span>
+            <div class="country-info">
+              <span class="country-name">Russie</span>
+              <span class="country-url">…/lists/russia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/russia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇸🇲</span>
+            <div class="country-info">
+              <span class="country-name">Saint-Marin</span>
+              <span class="country-url">…/lists/san_marino.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/san_marino.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇷🇸</span>
+            <div class="country-info">
+              <span class="country-name">Serbie</span>
+              <span class="country-url">…/lists/serbia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/serbia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇸🇰</span>
+            <div class="country-info">
+              <span class="country-name">Slovaquie</span>
+              <span class="country-url">…/lists/slovakia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/slovakia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇸🇮</span>
+            <div class="country-info">
+              <span class="country-name">Slovénie</span>
+              <span class="country-url">…/lists/slovenia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/slovenia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇪🇸</span>
+            <div class="country-info">
+              <span class="country-name">Espagne</span>
+              <span class="country-url">…/lists/spain.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/spain.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇸🇪</span>
+            <div class="country-info">
+              <span class="country-name">Suède</span>
+              <span class="country-url">…/lists/sweden.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/sweden.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇨🇭</span>
+            <div class="country-info">
+              <span class="country-name">Suisse</span>
+              <span class="country-url">…/lists/switzerland.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/switzerland.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇺🇦</span>
+            <div class="country-info">
+              <span class="country-name">Ukraine</span>
+              <span class="country-url">…/lists/ukraine.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/ukraine.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇬🇧</span>
+            <div class="country-info">
+              <span class="country-name">Royaume-Uni</span>
+              <span class="country-url">…/lists/uk.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/uk.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AMERIQUES -->
+      <div id="region-amerique" class="region-panel">
+        <div class="country-grid">
+          <div class="country-card">
+            <span class="flag">🇦🇷</span>
+            <div class="country-info">
+              <span class="country-name">Argentine</span>
+              <span class="country-url">…/lists/argentina.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/argentina.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇧🇷</span>
+            <div class="country-info">
+              <span class="country-name">Brésil</span>
+              <span class="country-url">…/lists/brazil.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/brazil.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇨🇦</span>
+            <div class="country-info">
+              <span class="country-name">Canada</span>
+              <span class="country-url">…/lists/canada.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/canada.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇨🇷</span>
+            <div class="country-info">
+              <span class="country-name">Costa Rica</span>
+              <span class="country-url">…/lists/costa_rica.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/costa_rica.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇩🇴</span>
+            <div class="country-info">
+              <span class="country-name">République Dominicaine</span>
+              <span class="country-url">…/lists/dominican_republic.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/dominican_republic.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇲🇽</span>
+            <div class="country-info">
+              <span class="country-name">Mexique</span>
+              <span class="country-url">…/lists/mexico.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/mexico.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇵🇾</span>
+            <div class="country-info">
+              <span class="country-name">Paraguay</span>
+              <span class="country-url">…/lists/paraguay.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/paraguay.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇵🇪</span>
+            <div class="country-info">
+              <span class="country-name">Pérou</span>
+              <span class="country-url">…/lists/peru.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/peru.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇹🇹</span>
+            <div class="country-info">
+              <span class="country-name">Trinité-et-Tobago</span>
+              <span class="country-url">…/lists/trinidad.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/trinidad.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇺🇸</span>
+            <div class="country-info">
+              <span class="country-name">États-Unis</span>
+              <span class="country-url">…/lists/usa.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/usa.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇻🇪</span>
+            <div class="country-info">
+              <span class="country-name">Venezuela</span>
+              <span class="country-url">…/lists/venezuela.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/venezuela.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASIE -->
+      <div id="region-asie" class="region-panel">
+        <div class="country-grid">
+          <div class="country-card">
+            <span class="flag">🇦🇲</span>
+            <div class="country-info">
+              <span class="country-name">Arménie</span>
+              <span class="country-url">…/lists/armenia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/armenia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇦🇺</span>
+            <div class="country-info">
+              <span class="country-name">Australie</span>
+              <span class="country-url">…/lists/australia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/australia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇦🇿</span>
+            <div class="country-info">
+              <span class="country-name">Azerbaïdjan</span>
+              <span class="country-url">…/lists/azerbaijan.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/azerbaijan.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇨🇳</span>
+            <div class="country-info">
+              <span class="country-name">Chine</span>
+              <span class="country-url">…/lists/china.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/china.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇫🇴</span>
+            <div class="country-info">
+              <span class="country-name">Îles Féroé</span>
+              <span class="country-url">…/lists/faroe_islands.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/faroe_islands.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇬🇪</span>
+            <div class="country-info">
+              <span class="country-name">Géorgie</span>
+              <span class="country-url">…/lists/georgia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/georgia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇬🇱</span>
+            <div class="country-info">
+              <span class="country-name">Groenland</span>
+              <span class="country-url">…/lists/greenland.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/greenland.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇭🇰</span>
+            <div class="country-info">
+              <span class="country-name">Hong Kong</span>
+              <span class="country-url">…/lists/hong_kong.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/hong_kong.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇮🇳</span>
+            <div class="country-info">
+              <span class="country-name">Inde</span>
+              <span class="country-url">…/lists/india.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/india.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇮🇩</span>
+            <div class="country-info">
+              <span class="country-name">Indonésie</span>
+              <span class="country-url">…/lists/indonesia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/indonesia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇯🇵</span>
+            <div class="country-info">
+              <span class="country-name">Japon</span>
+              <span class="country-url">…/lists/japan.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/japan.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇰🇷</span>
+            <div class="country-info">
+              <span class="country-name">Corée du Sud</span>
+              <span class="country-url">…/lists/korea.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/korea.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇲🇴</span>
+            <div class="country-info">
+              <span class="country-name">Macao</span>
+              <span class="country-url">…/lists/macau.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/macau.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇰🇵</span>
+            <div class="country-info">
+              <span class="country-name">Corée du Nord</span>
+              <span class="country-url">…/lists/north_korea.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/north_korea.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇹🇼</span>
+            <div class="country-info">
+              <span class="country-name">Taïwan</span>
+              <span class="country-url">…/lists/taiwan.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/taiwan.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOYEN-ORIENT -->
+      <div id="region-moyenorient" class="region-panel">
+        <div class="country-grid">
+          <div class="country-card">
+            <span class="flag">🇮🇷</span>
+            <div class="country-info">
+              <span class="country-name">Iran</span>
+              <span class="country-url">…/lists/iran.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/iran.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇮Iraq</span>
+            <div class="country-info">
+              <span class="country-name">Irak</span>
+              <span class="country-url">…/lists/iraq.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/iraq.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇮🇱</span>
+            <div class="country-info">
+              <span class="country-name">Israël</span>
+              <span class="country-url">…/lists/israel.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/israel.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇶🇦</span>
+            <div class="country-info">
+              <span class="country-name">Qatar</span>
+              <span class="country-url">…/lists/qatar.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/qatar.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇹🇷</span>
+            <div class="country-info">
+              <span class="country-name">Turquie</span>
+              <span class="country-url">…/lists/turkey.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/turkey.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇦UAE</span>
+            <div class="country-info">
+              <span class="country-name">Émirats Arabes Unis</span>
+              <span class="country-url">…/lists/united_arab_emirates.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/united_arab_emirates.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AFRIQUE -->
+      <div id="region-afrique" class="region-panel">
+        <div class="country-grid">
+          <div class="country-card">
+            <span class="flag">🇹Chad</span>
+            <div class="country-info">
+              <span class="country-name">Tchad</span>
+              <span class="country-url">…/lists/chad.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/chad.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+          <div class="country-card">
+            <span class="flag">🇸Somalia</span>
+            <div class="country-info">
+              <span class="country-name">Somalie</span>
+              <span class="country-url">…/lists/somalia.md</span>
+            </div>
+            <button
+              class="copy-small"
+              onclick="
+                copyUrl(
+                  this,
+                  'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlists/somalia.m3u8',
+                )
+              ">
+              Copier
+            </button>
+          </div>
+        </div>
+        <div class="callout warn" style="margin-top: 20px">
+          <strong>📡 Afrique :</strong> D'autres pays africains sont inclus dans
+          la playlist mondiale. Le dépôt accueille activement les contributions
+          pour étendre la couverture africaine. <br /><a
+            href="https://github.com/Free-TV/IPTV/pulls"
+            target="_blank"
+            style="color: var(--orange)"
+            >Contribuer sur GitHub →</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION VLC -->
+    <section id="vlc" class="section">
+      <div class="s-label">🎬 Guide d'utilisation</div>
+      <h2 class="s-title">Regarder avec VLC</h2>
+      <p class="s-intro">
+        VLC Media Player est le lecteur le plus universel et recommandé.
+        Disponible sur Windows, Mac, Linux, iOS et Android. Voici comment
+        configurer Free-TV en 4 étapes.
+      </p>
+
+      <div class="callout success reveal">
+        <strong>✅ VLC est gratuit et open source.</strong> Téléchargez-le sur
+        <a
+          href="https://www.videolan.org"
+          target="_blank"
+          style="color: var(--green)"
+          >videolan.org</a
+        >
+        avant de commencer.
+      </div>
+
+      <div class="steps-grid">
+        <!-- ÉTAPE 1 -->
+        <div class="step-card reveal">
+          <div class="step-img-slot" id="slot-1">
+            <img src="images/step1.png" alt="Ouvrir VLC" />
+          </div>
+          <div class="step-body">
+            <span class="step-num">1</span>
+            <div class="step-title">Ouvrir le menu Média</div>
+            <div class="step-desc">
+              Lance VLC puis clique sur <strong>Média</strong> dans la barre de
+              menu en haut. Sur mobile, appuie sur les 3 points puis "Ouvrir un
+              flux".
+            </div>
+            <div class="step-tip">
+              💡 Raccourci : <kbd>Ctrl+N</kbd> (Windows/Linux) ou
+              <kbd>Cmd+N</kbd> (Mac)
+            </div>
+          </div>
+        </div>
+
+        <!-- ÉTAPE 2 -->
+        <div class="step-card reveal">
+          <div class="step-img-slot" id="slot-2">
+            <img src="images/step2.png" alt="Ouvrir un flux réseau" />
+          </div>
+          <div class="step-body">
+            <span class="step-num">2</span>
+            <div class="step-title">Sélectionner "Ouvrir un flux réseau"</div>
+            <div class="step-desc">
+              Dans le menu Média, clique sur
+              <strong>"Ouvrir un flux réseau..."</strong>. Une fenêtre de
+              dialogue s'ouvre avec un champ URL.
+            </div>
+            <div class="step-tip">
+              💡 Tu peux aussi faire glisser l'URL directement dans la fenêtre
+              VLC !
+            </div>
+          </div>
+        </div>
+
+        <!-- ÉTAPE 3 -->
+        <div class="step-card reveal">
+          <div class="step-img-slot" id="slot-3">
+            <img src="images/step3.png" alt="Coller l'URL M3U8" />
+          </div>
+          <div class="step-body">
+            <span class="step-num">3</span>
+            <div class="step-title">Coller l'URL M3U8</div>
+            <div class="step-desc">
+              Copie l'URL du pays souhaité ci-dessus, puis colle-la dans le
+              champ "Veuillez entrer une URL réseau" et clique sur
+              <strong>Lire</strong>.
+            </div>
+            <div class="step-tip">
+              💡 Utilise la playlist mondiale pour accéder à tous les pays en
+              même temps.
+            </div>
+          </div>
+        </div>
+
+        <!-- ÉTAPE 4 -->
+        <div class="step-card reveal">
+          <div class="step-img-slot" id="slot-4">
+            <img src="images/step4.png" alt="Naviguer dans les chaînes" />
+          </div>
+          <div class="step-body">
+            <span class="step-num">4</span>
+            <div class="step-title">Naviguer dans les chaînes</div>
+            <div class="step-desc">
+              VLC charge la playlist. Ouvre la
+              <strong>Liste de lecture</strong> (Affichage → Liste de lecture)
+              pour voir et naviguer entre toutes les chaînes disponibles.
+            </div>
+            <div class="step-tip">
+              💡 Utilise <kbd>↑</kbd> <kbd>↓</kbd> pour changer de chaîne
+              pendant la lecture.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout warn" style="margin-top: 32px">
+        <strong>⚠️ Une chaîne ne fonctionne pas ?</strong> Les liens de
+        streaming peuvent être temporairement indisponibles. La playlist est
+        mise à jour automatiquement via GitHub Actions. Si un flux est cassé,
+        vous pouvez le signaler sur
+        <a
+          href="https://github.com/Free-TV/IPTV/issues"
+          target="_blank"
+          style="color: var(--orange)"
+          >GitHub Issues</a
+        >.
+      </div>
+    </section>
+
+    <!-- SECTION LECTEURS -->
+    <section id="players" class="section">
+      <div class="s-label">📱 Lecteurs compatibles</div>
+      <h2 class="s-title">Toutes les plateformes</h2>
+      <p class="s-intro">
+        Les liens M3U8 fonctionnent avec n'importe quel lecteur IPTV. Voici les
+        meilleurs, tous gratuits.
+      </p>
+
+      <div class="players-grid">
+        <a
+          href="https://www.videolan.org/vlc/"
+          target="_blank"
+          class="player-card reveal">
+          <span class="player-icon">🟠</span>
+          <span class="player-name">VLC</span>
+          <span class="player-platform"
+            >Windows · Mac · Linux · iOS · Android</span
+          >
+          <span class="player-badge badge-recommended">⭐ Recommandé</span>
+        </a>
+        <a href="https://kodi.tv/" target="_blank" class="player-card reveal">
+          <span class="player-icon">🔵</span>
+          <span class="player-name">Kodi</span>
+          <span class="player-platform"
+            >Windows · Mac · Linux · Android · TV</span
+          >
+          <span class="player-badge badge-free">Gratuit</span>
+        </a>
+        <a
+          href="https://play.google.com/store/apps/details?id=ru.iptvremote.android.iptv"
+          target="_blank"
+          class="player-card reveal">
+          <span class="player-icon">📺</span>
+          <span class="player-name">IPTV Smarters</span>
+          <span class="player-platform">Android · iOS · Smart TV</span>
+          <span class="player-badge badge-free">Gratuit</span>
+        </a>
+        <a
+          href="https://play.google.com/store/apps/details?id=ar.tvplayer.tv"
+          target="_blank"
+          class="player-card reveal">
+          <span class="player-icon">🎯</span>
+          <span class="player-name">TiviMate</span>
+          <span class="player-platform">Android TV · Fire TV</span>
+          <span class="player-badge badge-recommended">Top Android TV</span>
+        </a>
+        <a
+          href="https://www.perfect-player.com/"
+          target="_blank"
+          class="player-card reveal">
+          <span class="player-icon">🎮</span>
+          <span class="player-name">Perfect Player</span>
+          <span class="player-platform">Android · Android TV</span>
+          <span class="player-badge badge-free">Gratuit</span>
+        </a>
+        <a
+          href="https://apps.apple.com/app/infuse-7/id1136220934"
+          target="_blank"
+          class="player-card reveal">
+          <span class="player-icon">🍎</span>
+          <span class="player-name">Infuse</span>
+          <span class="player-platform">iOS · macOS · Apple TV</span>
+          <span class="player-badge badge-recommended">Top Apple</span>
+        </a>
+      </div>
+
+      <div class="callout info" style="margin-top: 32px">
+        <strong>📌 Astuce Smart TV :</strong> Sur Samsung (Tizen) ou LG (webOS),
+        installez <strong>Smart IPTV</strong> ou <strong>SS IPTV</strong> depuis
+        le store officiel, puis ajoutez l'URL M3U8 dans les paramètres de
+        l'application.
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-logo">FREE · TV · IPTV</div>
+      <p>
+        Ce site est un guide non officiel basé sur le dépôt open source
+        <a
+          href="https://github.com/Free-TV/IPTV"
+          target="_blank"
+          style="color: var(--accent)"
+          >Free-TV/IPTV</a
+        >
+        sous licence MIT.<br />
+        Toutes les chaînes sont officiellement gratuites dans leurs pays
+        respectifs.
+      </p>
+      <div class="footer-links">
+        <a href="https://github.com/Free-TV/IPTV" target="_blank">GitHub</a>
+        <a href="https://github.com/Free-TV/IPTV/issues" target="_blank"
+          >Signaler un problème</a
+        >
+        <a href="https://github.com/Free-TV/IPTV/pulls" target="_blank"
+          >Contribuer</a
+        >
+        <a href="https://www.videolan.org/vlc/" target="_blank"
+          >Télécharger VLC</a
+        >
+      </div>
+    </footer>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBGYsiTJYyEpZ6y9d9egEkDyMhE9txx1Es",
+        authDomain: "learn-c5284.firebaseapp.com",
+        projectId: "learn-c5284",
+        storageBucket: "learn-c5284.firebasestorage.app",
+        messagingSenderId: "234831074254",
+        appId: "1:234831074254:web:39de3a3d83a60da574119f",
+      };
+
+      const app = initializeApp(firebaseConfig);
+    </script>
+
+    <script>
+      function copyUrl(btn, url) {
+        navigator.clipboard.writeText(url).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = "✅ Copié !";
+          btn.classList.add("copied");
+          setTimeout(() => {
+            btn.textContent = orig;
+            btn.classList.remove("copied");
+          }, 2000);
+        });
+      }
+
+      function showRegion(region) {
+        document
+          .querySelectorAll(".region-panel")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".rtab")
+          .forEach((t) => t.classList.remove("active"));
+        document.getElementById("region-" + region).classList.add("active");
+        event.target.classList.add("active");
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add("visible"), i * 60);
+            }
+          });
+        },
+        { threshold: 0.08 },
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+
+      document.querySelectorAll(".step-img-slot img").forEach((img) => {
+        img.closest(".step-img-slot").classList.add("has-image");
+      });
+    </script>
+  </body>
+</html>
