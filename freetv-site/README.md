@@ -10,7 +10,7 @@ Une interface web moderne et épurée pour accéder aux listes de lecture IPTV g
   - **Mode Sombre Automatique :** S'adapte aux préférences de votre système.
   - **Design "Épuré" :** Mise en avant des contenus avec des captures d'écran non rognées et un rendu professionnel.
 - **Compatibilité Multi-plateforme :** Recommandations de lecteurs pour Windows, Mac, Linux, Android, iOS et Smart TV.
-- **Mise à jour automatique :** Basé sur le dépôt open source [Free-TV/IPTV](https://github.com/Free-TV/IPTV) mis à jour via GitHub Actions.
+- **Mise à jour automatique :** Basé sur le dépôt open source [Free-TV/IPTV](https://github.com/iptv-org/iptv) mis à jour via GitHub Actions.
 
 ## 🛠️ Installation & Usage
 
@@ -29,4 +29,4 @@ Le projet est une application statique (SPA) simple :
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT et s'appuie sur le travail communautaire du dépôt [Free-TV/IPTV](https://github.com/Free-TV/IPTV). Toutes les chaînes proposées sont officiellement gratuites dans leurs pays respectifs.
+Ce projet est sous licence MIT et s'appuie sur le travail communautaire du dépôt [Free-TV/IPTV](https://github.com/iptv-org/iptv). Toutes les chaînes proposées sont officiellement gratuites dans leurs pays respectifs.
